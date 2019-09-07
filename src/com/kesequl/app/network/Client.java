@@ -28,7 +28,10 @@ import javax.swing.JOptionPane;
  * @author user65
  */
 public class Client {
-    public static final String HOST = "http://127.0.0.1/kesequl-prealpha/Api/";
+    public static final String BASE_HOST = "http://127.0.0.1/kesequl-prealpha/";
+    public static final String HOST_API = BASE_HOST + "Api/";
+    public static final String BASE_LAPORAN = BASE_HOST + "laporan/";
+    public static final String HOST_LAPORAN_VOTING = BASE_LAPORAN + "voting/";
     
     public static final int CREATE = 1;
     public static final int READ = 2;
@@ -42,7 +45,7 @@ public class Client {
     public static String getResultFromURL(KesequlHttpRequest kesequlHttp) {
         try {
             String paramGet = (kesequlHttp.getMethod() == Method.GET && kesequlHttp.getVal() != null && !kesequlHttp.getVal().isEmpty()) ? "?" + kesequlHttp.getVal() : "";
-            HttpURLConnection con = (HttpURLConnection) URI.create(HOST + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
+            HttpURLConnection con = (HttpURLConnection) URI.create(HOST_API + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
 
             con.setRequestMethod(kesequlHttp.getMethod().getParam());
             con.setRequestProperty("Accept", "*/*");
@@ -79,7 +82,7 @@ public class Client {
             callback.onPrepare();
             try {
                 String paramGet = (kesequlHttp.getMethod() == Method.GET && kesequlHttp.getVal() != null && !kesequlHttp.getVal().isEmpty()) ? "?" + kesequlHttp.getVal() : "";
-                HttpURLConnection con = (HttpURLConnection) URI.create(HOST + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
+                HttpURLConnection con = (HttpURLConnection) URI.create(HOST_API + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
                 
                 con.setRequestMethod(kesequlHttp.getMethod().getParam());
                 con.setRequestProperty("Accept", "application/json");
@@ -138,7 +141,7 @@ public class Client {
             callback.onPrepare();
             try {
                 String paramGet = (kesequlHttp.getMethod() == Method.GET && kesequlHttp.getVal() != null && !kesequlHttp.getVal().isEmpty()) ? "?" + kesequlHttp.getVal() : "";
-                HttpURLConnection con = (HttpURLConnection) URI.create(HOST + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
+                HttpURLConnection con = (HttpURLConnection) URI.create(HOST_API + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
                 
                 con.setRequestMethod(kesequlHttp.getMethod().getParam());
                 con.setRequestProperty("Accept", "application/json");
