@@ -30,8 +30,6 @@ import javax.swing.table.DefaultTableModel;
  * @author user65
  */
 public class KelolaVoting extends javax.swing.JFrame {
-    public static final String LINK_BUKA_LAPORAN = "http://localhost/kesequl-prealpha/laporan/voting/";
-
     private static final long serialVersionUID = 5548509128688779599L;
 
     private final User user;
@@ -586,7 +584,7 @@ public class KelolaVoting extends javax.swing.JFrame {
         
         if (JOptionPane.showConfirmDialog(this, "Melihat laporan akan membuka browser yakin ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             try {
-                Desktop.getDesktop().browse(URI.create(LINK_BUKA_LAPORAN + votingS.getIdEventVoting() + "?token=" + user.getToken()));
+                Desktop.getDesktop().browse(URI.create(Client.HOST_LAPORAN_VOTING + votingS.getIdEventVoting() + "?token=" + user.getToken()));
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
             }
