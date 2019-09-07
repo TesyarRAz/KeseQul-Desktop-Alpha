@@ -579,7 +579,7 @@ public class KelolaVoting extends javax.swing.JFrame {
 
         EventVoting votingS = listVoting.get(row);
         
-        if (!votingS.isStatus()) {
+        if (votingS.isStatus()) {
             JOptionPane.showMessageDialog(this, "Event belum selesai belum bisa melihat laporan");
             return;
         }
