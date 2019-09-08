@@ -36,6 +36,7 @@ public class PengelolaanTU extends javax.swing.JFrame {
     public PengelolaanTU(User user, JFrame frameParent) {
         initComponents();
         
+        dialogTopup.setSize(400, 300);
         dialogTopup.setLocationRelativeTo(PengelolaanTU.this);
         
         this.user = user;
@@ -122,7 +123,7 @@ public class PengelolaanTU extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel3.setText("Username Pentopup");
+        jLabel3.setText("Username Tujuan");
 
         jLabel4.setText(":");
 
@@ -210,13 +211,12 @@ public class PengelolaanTU extends javax.swing.JFrame {
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTransfer)
                     .addComponent(btnBatal))
-                .addGap(42, 42, 42))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout dialogTopupLayout = new javax.swing.GroupLayout(dialogTopup.getContentPane());
@@ -403,20 +403,20 @@ public class PengelolaanTU extends javax.swing.JFrame {
             
             @Override
             public void onSuccess(int status, String pesan, Object data) {
-                if (!Client.isTokenExpired(PengelolaanTU.this, status, user)) {
+                if (!Client.isTokenExpired(dialogTopup, status, user)) {
                     if (status == 1) {
                         targetTransfer = Integer.parseInt(pesan);
                     } else {
                         targetTransfer = -1;
                         // BAGIAN IF ELSE JANGAN DIRUBAH, SANGAT PENTING
-                        JOptionPane.showMessageDialog(PengelolaanTU.this, pesan);
+                        JOptionPane.showMessageDialog(dialogTopup, pesan);
                     }
                 }
             }
 
             @Override
             public void onFailed(Exception ex) {
-                JOptionPane.showMessageDialog(PengelolaanTU.this, ex.getMessage());
+                JOptionPane.showMessageDialog(dialogTopup, ex.getMessage());
             }
 
             @Override
