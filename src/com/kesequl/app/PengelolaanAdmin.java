@@ -14,6 +14,7 @@ import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -33,6 +34,7 @@ public class PengelolaanAdmin extends javax.swing.JFrame {
      * @param user */
     public PengelolaanAdmin(User user, JFrame frameParent) {
         initComponents();
+        setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/admin.png")).getImage());
         
         this.user = user;
         this.frameParent = frameParent;

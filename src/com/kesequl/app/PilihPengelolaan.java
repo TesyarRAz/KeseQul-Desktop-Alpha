@@ -9,6 +9,7 @@ import com.kesequl.app.entity.Peran;
 import com.kesequl.app.entity.User;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -29,6 +30,7 @@ public final class PilihPengelolaan extends javax.swing.JFrame implements Runnab
      */
     public PilihPengelolaan(User user) {
         initComponents();
+        setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/icon_kesequl.png")).getImage());
         
         boolean valid = false;
         for (Peran peran : user.getPerans()) {

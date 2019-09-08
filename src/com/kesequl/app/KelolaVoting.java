@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -29,7 +30,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author user65
  */
-public class KelolaVoting extends javax.swing.JFrame {
+public final class KelolaVoting extends javax.swing.JFrame {
     private static final long serialVersionUID = 5548509128688779599L;
 
     private final User user;
@@ -48,6 +49,7 @@ public class KelolaVoting extends javax.swing.JFrame {
      */
     public KelolaVoting(User user, Admin admin, Runnable parentRunnable) {
         initComponents();
+        setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/icon_kesequl.png")).getImage());
         
         this.user = user;
         this.admin = admin;

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author user65
  */
-public class KelolaTeamVoting extends javax.swing.JFrame {
+public final class KelolaTeamVoting extends javax.swing.JFrame {
     private static final long serialVersionUID = 374267292223931376L;
     
     private final User user;
@@ -49,6 +50,7 @@ public class KelolaTeamVoting extends javax.swing.JFrame {
      */
     public KelolaTeamVoting(User user, EventVoting eventVoting, Runnable parentRunnable) {
         initComponents();
+        setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/icon_kesequl.png")).getImage());
         
         framePilihSiswa.setSize(420, 240);
         

@@ -12,6 +12,7 @@ import com.kesequl.app.network.Client;
 import com.kesequl.app.network.Commands;
 import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -19,9 +20,11 @@ import javax.swing.JOptionPane;
  *
  * @author user65
  */
-public class PengelolaanTU extends javax.swing.JFrame {
+public final class PengelolaanTU extends javax.swing.JFrame {
 
     private static final long serialVersionUID = -936735366808918548L;
+    
+    
     
     private final User user;
     private Tu tu;
@@ -35,6 +38,7 @@ public class PengelolaanTU extends javax.swing.JFrame {
      * @param frameParent */
     public PengelolaanTU(User user, JFrame frameParent) {
         initComponents();
+        setIconImage(new ImageIcon(getClass().getClassLoader().getResource("image/icon_kesequl.png")).getImage());
         
         dialogTopup.setSize(400, 300);
         dialogTopup.setLocationRelativeTo(PengelolaanTU.this);
