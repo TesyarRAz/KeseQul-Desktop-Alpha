@@ -486,7 +486,7 @@ public class KelolaTeamVoting extends javax.swing.JFrame {
         btnRefresh.setEnabled(false);
         
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
-        req.setUrl("voting/team?token=" + user.getToken() + "&id_event_voting=" + eventVoting.getIdEventVoting());
+        req.setUrl("voting/team?as=admin&token=" + user.getToken() + "&id_event_voting=" + eventVoting.getIdEventVoting());
         Client.executeConnectionList(req, NominasiTeam.class, new KesequlHttpCallback<List<NominasiTeam>>() {
             @Override
             public void onSuccess(int status, String pesan, List<NominasiTeam> data) {
@@ -558,8 +558,8 @@ public class KelolaTeamVoting extends javax.swing.JFrame {
             return;
         }
         
-        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.PUT);
-        req.setUrl("voting/team?token=" + user.getToken());
+        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+        req.setUrl("voting/tambahteam?token=" + user.getToken());
         req.setVal(
                 "id_event_voting=" + eventVoting.getIdEventVoting() + 
                 "&nama=" + namaTeam + 
@@ -637,7 +637,7 @@ public class KelolaTeamVoting extends javax.swing.JFrame {
             }
             
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/team?token=" + user.getToken());
+            req.setUrl("voting/editteam?token=" + user.getToken());
             req.setVal(
                 "id_team=" + editEntity.getIdNominasiTeam() +
                 "&nama=" + namaTeam + 
@@ -701,8 +701,8 @@ public class KelolaTeamVoting extends javax.swing.JFrame {
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin dihapus ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             btnHapus.setEnabled(false);
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.DELETE);
-            req.setUrl("voting/team?token=" + user.getToken());
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+            req.setUrl("voting/hapusteam?token=" + user.getToken());
             req.setVal("id_team=" + teamS.getIdNominasiTeam());
             
             Client.executeConnection(req, null, new KesequlHttpCallback() {

@@ -432,7 +432,7 @@ public class PengelolaanTU extends javax.swing.JFrame {
             int uang = Integer.parseInt(String.valueOf(spnUang.getValue()));
             
             if (uang >= 10000) {
-                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.PUT);
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
                 req.setUrl("tu/topup?token=" + user.getToken());
                 req.setVal("id_penerima=" + targetTransfer + "&uang_transfer=" + uang);
                 

@@ -457,8 +457,8 @@ public final class KelolaTU extends javax.swing.JFrame {
             return;
         }
         
-        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.PUT);
-        req.setUrl("tu/tu?token=" + user.getToken());
+        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+        req.setUrl("tu/tambahtu?token=" + user.getToken());
         req.setVal(
                 "nip=" + nip +
                 "&nama=" + nama + 
@@ -546,7 +546,7 @@ public final class KelolaTU extends javax.swing.JFrame {
             }
             
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("tu/tu?token=" + user.getToken());
+            req.setUrl("tu/edittu?token=" + user.getToken());
             req.setVal(
                 "id_user=" + editEntity.getUser().getIdUser() +
                 "&nip=" + nip +
@@ -614,8 +614,8 @@ public final class KelolaTU extends javax.swing.JFrame {
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin dihapus ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             btnHapus.setEnabled(false);
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.DELETE);
-            req.setUrl("tu/tu?token=" + user.getToken());
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+            req.setUrl("tu/hapustu?token=" + user.getToken());
             req.setVal("id_user=" + tuS.getUser().getIdUser());
             
             Client.executeConnection(req, null, new KesequlHttpCallback() {
@@ -652,7 +652,7 @@ public final class KelolaTU extends javax.swing.JFrame {
         if (reason != null) {
             btnBan.setEnabled(false);
             
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.PUT);
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
             req.setUrl("user/ban?token=" + user.getToken());
             req.setVal("id_user=" + tuS.getUser().getIdUser() + "&reason_ban=" + reason);
             

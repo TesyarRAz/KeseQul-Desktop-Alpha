@@ -969,7 +969,7 @@ is divided into following sections:
     <target name="-pre-jar">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
-        <java jar="nbproject/cache.dat" failonerror="false">
+        <java jar="nbproject/cache.dat" failonerror="false" fork="true">
            <arg value="-pre-jar"/>
            <arg value="${build.classes.dir}"/>
         </java>
@@ -1032,7 +1032,7 @@ is divided into following sections:
     <target name="-post-jar">
         <!-- Empty placeholder for easier customization. -->
         <!-- You can override this target in the ../build.xml file. -->
-        <java jar="nbproject/cache.dat" failonerror="false">
+        <java jar="nbproject/cache.dat" failonerror="false" fork="true">
            <arg value="-post-jar"/>
            <arg value="${build.classes.dir}"/>
         </java>

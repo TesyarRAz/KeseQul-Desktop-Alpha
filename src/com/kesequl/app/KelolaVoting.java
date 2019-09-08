@@ -303,8 +303,8 @@ public class KelolaVoting extends javax.swing.JFrame {
             return;
         }
         
-        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.PUT);
-        req.setUrl("voting/event?token=" + user.getToken());
+        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+        req.setUrl("voting/tambahevent?token=" + user.getToken());
         req.setVal(
                 "nama_event=" + namaEvent + 
                 "&tanggal_mulai=" + tanggal_mulai +
@@ -347,7 +347,7 @@ public class KelolaVoting extends javax.swing.JFrame {
         btnRefresh.setEnabled(false);
         
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
-        req.setUrl("voting/event?token=" + user.getToken());
+        req.setUrl("voting/event?as=admin&token=" + user.getToken());
         Client.executeConnectionList(req, EventVoting.class, new KesequlHttpCallback<List<EventVoting>>() {
             @Override
             public void onSuccess(int status, String pesan, List<EventVoting> data) {
@@ -424,7 +424,7 @@ public class KelolaVoting extends javax.swing.JFrame {
             }
             
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/event?token=" + user.getToken());
+            req.setUrl("voting/editevent?token=" + user.getToken());
             req.setVal(
                 "id_event_voting=" + editEntity.getIdEventVoting() +
                 "&nama_event=" + namaEvent + 
@@ -487,8 +487,8 @@ public class KelolaVoting extends javax.swing.JFrame {
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin dihapus ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             btnHapus.setEnabled(false);
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.DELETE);
-            req.setUrl("voting/event?token=" + user.getToken());
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+            req.setUrl("voting/hapusevent?token=" + user.getToken());
             req.setVal("id_event_voting=" + votingS.getIdEventVoting());
             
             Client.executeConnection(req, null, new KesequlHttpCallback() {
@@ -538,7 +538,7 @@ public class KelolaVoting extends javax.swing.JFrame {
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin diselesaikan ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/event?token=" + user.getToken());
+            req.setUrl("voting/editevent?token=" + user.getToken());
             req.setVal("id_event_voting=" + votingS.getIdEventVoting() + "&status=false");
             
             Client.executeConnection(req, null, new KesequlHttpCallback() {

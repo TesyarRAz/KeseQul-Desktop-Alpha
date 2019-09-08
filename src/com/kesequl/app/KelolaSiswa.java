@@ -565,8 +565,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
             return;
         }
         
-        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.PUT);
-        req.setUrl("siswa/siswa?token=" + user.getToken());
+        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+        req.setUrl("siswa/tambahsiswa?token=" + user.getToken());
         req.setVal(
                 "nisn=" + nisn +
                 "&nama=" + nama + 
@@ -668,7 +668,7 @@ public final class KelolaSiswa extends javax.swing.JFrame {
             }
             
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("siswa/siswa?token=" + user.getToken());
+            req.setUrl("siswa/editsiswa?token=" + user.getToken());
             req.setVal(
                 "id_user=" + editEntity.getUser().getIdUser() +
                 "&nisn=" + nisn +
@@ -741,8 +741,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin dihapus ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             btnHapus.setEnabled(false);
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.DELETE);
-            req.setUrl("siswa/siswa?token=" + user.getToken());
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+            req.setUrl("siswa/hapussiswa?token=" + user.getToken());
             req.setVal("id_user=" + siswaS.getUser().getIdUser());
             
             Client.executeConnection(req, null, new KesequlHttpCallback() {
@@ -779,7 +779,7 @@ public final class KelolaSiswa extends javax.swing.JFrame {
         if (reason != null) {
             btnBan.setEnabled(false);
             
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.PUT);
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
             req.setUrl("user/ban?token=" + user.getToken());
             req.setVal("id_user=" + siswaS.getUser().getIdUser() + "&reason_ban=" + reason);
             

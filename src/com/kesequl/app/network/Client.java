@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
  * @author user65
  */
 public class Client {
-    public static final String BASE_HOST = "http://127.0.0.1/kesequl-prealpha/";
+    public static final String BASE_HOST = "https://kesequl.000webhostapp.com/";
     public static final String HOST_API = BASE_HOST + "Api/";
     public static final String BASE_LAPORAN = BASE_HOST + "laporan/";
     public static final String HOST_LAPORAN_VOTING = BASE_LAPORAN + "voting/";
