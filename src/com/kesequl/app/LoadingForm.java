@@ -9,7 +9,7 @@ package com.kesequl.app;
  *
  * @author user65
  */
-public class LoadingForm extends javax.swing.JDialog {
+public final class LoadingForm extends javax.swing.JDialog {
     private static final long serialVersionUID = 3769223362949290133L;
 
     /**
@@ -20,6 +20,10 @@ public class LoadingForm extends javax.swing.JDialog {
     public LoadingForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
+        setLocationRelativeTo(parent);
+        
+        this.setType(Type.UTILITY);
         
         loading.setIndeterminate(true);
     }
@@ -39,6 +43,14 @@ public class LoadingForm extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Loading");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -79,6 +91,15 @@ public class LoadingForm extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        
+    }//GEN-LAST:event_formWindowClosed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        
+    }//GEN-LAST:event_formWindowClosing
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
