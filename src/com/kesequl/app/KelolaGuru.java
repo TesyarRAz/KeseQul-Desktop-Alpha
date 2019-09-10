@@ -12,6 +12,7 @@ import com.kesequl.app.network.Client;
 import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -462,7 +463,8 @@ public final class KelolaGuru extends javax.swing.JFrame {
         String nip = txtNip.getText().trim();
         String nama = txtNama.getText().trim();
         String gender = rbL.isSelected() ? "L" : "P";
-        String tanggal_lahir = txtLahir.getDate() != null ? LocalDate.parse(DateFormat.getDateInstance(DateFormat.SHORT).format(txtLahir.getDate()), DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)).toString() : "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String tanggal_lahir = txtLahir.getDate() != null ? dateFormat.format(txtLahir.getDate()) : "";
         String email = txtEmail.getText().trim();
         String username = txtUsername.getText().trim();
         String password = String.valueOf(txtPassword.getPassword()).trim();
@@ -546,7 +548,8 @@ public final class KelolaGuru extends javax.swing.JFrame {
             String nip = txtNip.getText().trim();
             String nama = txtNama.getText().trim();
             String gender = rbL.isSelected() ? "L" : "P";
-            String tanggal_lahir = txtLahir.getDate() != null ? LocalDate.parse(DateFormat.getDateInstance(DateFormat.SHORT).format(txtLahir.getDate()), DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)).toString() : "";
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String tanggal_lahir = txtLahir.getDate() != null ? dateFormat.format(txtLahir.getDate()) : "";
             String email = txtEmail.getText().trim();
             String username = txtUsername.getText().trim();
             String password = String.valueOf(txtPassword.getPassword()).trim();

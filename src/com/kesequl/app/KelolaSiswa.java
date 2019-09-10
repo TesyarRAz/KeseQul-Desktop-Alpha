@@ -13,6 +13,7 @@ import com.kesequl.app.network.Client;
 import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -563,7 +564,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
         String nisn = txtNisn.getText().trim();
         String nama = txtNama.getText().trim();
         String gender = rbL.isSelected() ? "L" : "P";
-        String tanggal_lahir = txtLahir.getDate() != null ? LocalDate.parse(DateFormat.getDateInstance(DateFormat.SHORT).format(txtLahir.getDate()), DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)).toString() : "";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String tanggal_lahir = txtLahir.getDate() != null ? dateFormat.format(txtLahir.getDate()) : "";
         String kelas = String.valueOf(spnKelas.getValue()).trim();
         Jurusan jurusan = null;
         for (Jurusan j : listJurusan) {
@@ -665,7 +667,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
             String nisn = txtNisn.getText().trim();
             String nama = txtNama.getText().trim();
             String gender = rbL.isSelected() ? "L" : "P";
-            String tanggal_lahir = txtLahir.getDate() != null ? LocalDate.parse(DateFormat.getDateInstance(DateFormat.SHORT).format(txtLahir.getDate()), DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)).toString() : "";
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String tanggal_lahir = txtLahir.getDate() != null ? dateFormat.format(txtLahir.getDate()) : "";
             String kelas = String.valueOf(spnKelas.getValue()).trim();
             Jurusan jurusan = null;
             for (Jurusan j : listJurusan) {
