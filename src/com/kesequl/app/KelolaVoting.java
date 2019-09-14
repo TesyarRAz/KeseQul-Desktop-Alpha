@@ -5,6 +5,11 @@
  */
 package com.kesequl.app;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.kesequl.app.entity.Admin;
 import com.kesequl.app.entity.EventVoting;
 import com.kesequl.app.entity.User;
@@ -14,7 +19,10 @@ import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
 import java.awt.Desktop;
 import java.io.IOException;
+import java.io.File;
 import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -89,6 +97,7 @@ public final class KelolaVoting extends javax.swing.JFrame {
         btnLihatLaporan = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jToggleButton1 = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -132,7 +141,7 @@ public final class KelolaVoting extends javax.swing.JFrame {
                     .addComponent(txtNamaEvent)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtSelesai, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                            .addComponent(txtSelesai, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtMulai, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(141, 141, 141)))
                 .addContainerGap())
@@ -238,6 +247,13 @@ public final class KelolaVoting extends javax.swing.JFrame {
 
         jButton2.setText("<-");
 
+        jToggleButton1.setText("Generate QR");
+        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jToggleButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -251,6 +267,14 @@ public final class KelolaVoting extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnRefresh)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jToggleButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnLihatLaporan)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -263,13 +287,7 @@ public final class KelolaVoting extends javax.swing.JFrame {
                                         .addGap(18, 18, 18)
                                         .addComponent(btnEdit)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(btnTambah))))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnRefresh)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton1)))))
+                                        .addComponent(btnTambah)))))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -293,7 +311,8 @@ public final class KelolaVoting extends javax.swing.JFrame {
                     .addComponent(btnTambah)
                     .addComponent(btnEdit)
                     .addComponent(btnHapus)
-                    .addComponent(btnLihatLaporan))
+                    .addComponent(btnLihatLaporan)
+                    .addComponent(jToggleButton1))
                 .addContainerGap())
         );
 
@@ -610,6 +629,42 @@ public final class KelolaVoting extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnLihatLaporanActionPerformed
 
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Silahkan Pilih Data Yang Mau Diedit");
+            return;
+        }
+
+        EventVoting votingS = listVoting.get(row);
+        
+        if (!votingS.isStatus()) {
+            JOptionPane.showMessageDialog(this, "Event sudah selesai, tidak bisa lihat qr");
+            return;
+        }
+        
+        try {
+            QRCodeWriter qWritter = new QRCodeWriter();
+            BitMatrix bm = qWritter.encode(votingS.getPassword(), BarcodeFormat.QR_CODE, 500, 500);
+            Path path = FileSystems.getDefault().getPath("./qr" + votingS.getIdEventVoting() + ".png");
+            
+            MatrixToImageWriter.writeToPath(bm, "PNG", path);
+
+            File file = new File(path.toUri().toURL().getFile());
+            if (file.exists()) {
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().open(file);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Desktop Tidak Support");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Tidak Bisa Membuka File / File tidak ada");
+            }
+        } catch (WriterException | IOException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuatSelesai;
     private javax.swing.JButton btnDetail;
@@ -629,6 +684,7 @@ public final class KelolaVoting extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JTable table;
     private com.toedter.calendar.JDateChooser txtMulai;
     private javax.swing.JTextField txtNamaEvent;
