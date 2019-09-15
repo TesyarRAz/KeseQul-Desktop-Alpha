@@ -22,11 +22,11 @@ public class User implements JSONConverter{
     private String password;
     private String email;
     private String token;
-    private boolean aktif;
+    private String status;
     private String keterangan;
     private int uang;
     private List<Peran> perans = new ArrayList<>();
-    
+
     public int getIdUser() {
         return idUser;
     }
@@ -59,10 +59,6 @@ public class User implements JSONConverter{
         this.email = email;
     }
 
-    public boolean isAktif() {
-        return aktif;
-    }
-
     public String getToken() {
         return token;
     }
@@ -71,8 +67,12 @@ public class User implements JSONConverter{
         this.token = token;
     }
 
-    public void setAktif(boolean aktif) {
-        this.aktif = aktif;
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getKeterangan() {
@@ -98,10 +98,10 @@ public class User implements JSONConverter{
     public void setPerans(List<Peran> perans) {
         this.perans = perans;
     }
-
+    
     @Override
     public void fromJson(JSONObject json) throws JSONException {
-        aktif = json.optInt("aktif") == 1;
+        status = json.optString("status");
         idUser = json.optInt("id_user");
         username = json.optString("username");
         token = json.optString("token");
