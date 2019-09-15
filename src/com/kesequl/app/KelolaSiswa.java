@@ -78,21 +78,15 @@ public final class KelolaSiswa extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
         txtNisn = new javax.swing.JTextField();
         txtNama = new javax.swing.JTextField();
         rbL = new javax.swing.JRadioButton();
         rbP = new javax.swing.JRadioButton();
         txtLahir = new com.toedter.calendar.JDateChooser();
-        txtUsername = new javax.swing.JTextField();
-        txtPassword = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         comboJurusan = new javax.swing.JComboBox<>();
@@ -157,10 +151,6 @@ public final class KelolaSiswa extends javax.swing.JFrame {
 
         jLabel11.setText("Tanggal Lahir");
 
-        jLabel13.setText("Username");
-
-        jLabel15.setText("Password");
-
         jLabel2.setText(":");
 
         jLabel3.setText(":");
@@ -168,10 +158,6 @@ public final class KelolaSiswa extends javax.swing.JFrame {
         jLabel5.setText(":");
 
         jLabel6.setText(":");
-
-        jLabel17.setText(":");
-
-        jLabel18.setText(":");
 
         txtNisn.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -225,23 +211,6 @@ public final class KelolaSiswa extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel18)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPassword))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel17)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtUsername))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -353,16 +322,6 @@ public final class KelolaSiswa extends javax.swing.JFrame {
                     .addComponent(jLabel16)
                     .addComponent(jLabel19)
                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel17)
-                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel18)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -576,10 +535,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
         }
         String index_jurusan = String.valueOf(spnIndexJurusan.getValue()).trim();
         String email = txtEmail.getText().trim();
-        String username = txtUsername.getText().trim();
-        String password = String.valueOf(txtPassword.getPassword()).trim();
         
-        if (nisn.isEmpty() || nama.isEmpty() || gender.isEmpty() || tanggal_lahir.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty() || kelas.isEmpty() || jurusan == null || index_jurusan.isEmpty()) {
+        if (nisn.isEmpty() || nama.isEmpty() || gender.isEmpty() || tanggal_lahir.isEmpty() || email.isEmpty() || kelas.isEmpty() || jurusan == null || index_jurusan.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Tidak boleh ada inputan yang kosong");
             return;
         }
@@ -594,9 +551,7 @@ public final class KelolaSiswa extends javax.swing.JFrame {
                 "&email=" + email + 
                 "&kelas=" + kelas +
                 "&id_jurusan=" + jurusan.getIdJurusan() +
-                "&index_jurusan=" + index_jurusan +
-                "&username=" + username + 
-                "&password=" + password
+                "&index_jurusan=" + index_jurusan
         );
         Client.executeConnection(req, null, new KesequlHttpCallback() {
             @Override
@@ -617,8 +572,6 @@ public final class KelolaSiswa extends javax.swing.JFrame {
                         rbL.setSelected(true);
                         txtLahir.setDate(null);
                         txtEmail.setText("");
-                        txtUsername.setText("");
-                        txtPassword.setText("");
                         spnKelas.setValue(10);
                         spnIndexJurusan.setValue(1);
                     }
@@ -658,7 +611,6 @@ public final class KelolaSiswa extends javax.swing.JFrame {
             // Harus dikurangi 1900, karena library Date otomatis menambahkan 1900
             txtLahir.setDate(new Date(siswaS.getTtl().getYear() - 1900, siswaS.getTtl().getMonthValue(), siswaS.getTtl().getDayOfMonth()));
             rbL.setSelected(siswaS.getGender() == 'L');
-            txtUsername.setText(siswaS.getUser().getUsername());
             txtEmail.setText(siswaS.getUser().getEmail());
             spnKelas.setValue(siswaS.getKelas());
             comboJurusan.setSelectedItem(siswaS.getJurusan().getNama());
@@ -679,10 +631,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
             }
             String index_jurusan = String.valueOf(spnIndexJurusan.getValue()).trim();
             String email = txtEmail.getText().trim();
-            String username = txtUsername.getText().trim();
-            String password = String.valueOf(txtPassword.getPassword()).trim();
             
-            if (nisn.isEmpty() || nama.isEmpty() || gender.isEmpty() || tanggal_lahir.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty() || kelas.isEmpty() || jurusan == null || index_jurusan.isEmpty()) {
+            if (nisn.isEmpty() || nama.isEmpty() || gender.isEmpty() || tanggal_lahir.isEmpty() || email.isEmpty() || kelas.isEmpty() || jurusan == null || index_jurusan.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Tidak boleh ada inputan yang kosong");
                 return;
             }
@@ -698,9 +648,7 @@ public final class KelolaSiswa extends javax.swing.JFrame {
                 "&email=" + email + 
                 "&kelas=" + kelas +
                 "&id_jurusan=" + jurusan.getIdJurusan() +
-                "&index_jurusan=" + index_jurusan +
-                "&username=" + username + 
-                "&password=" + password
+                "&index_jurusan=" + index_jurusan
             );
             
             Client.executeConnection(req, null, new KesequlHttpCallback() {
@@ -717,8 +665,6 @@ public final class KelolaSiswa extends javax.swing.JFrame {
                             rbL.setSelected(true);
                             txtLahir.setDate(null);
                             txtEmail.setText("");
-                            txtUsername.setText("");
-                            txtPassword.setText("");
                             spnKelas.setValue(10);
                             spnIndexJurusan.setValue(1);
                         }
@@ -839,12 +785,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
@@ -871,7 +813,5 @@ public final class KelolaSiswa extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser txtLahir;
     private javax.swing.JTextField txtNama;
     private javax.swing.JTextField txtNisn;
-    private javax.swing.JPasswordField txtPassword;
-    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }
