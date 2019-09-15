@@ -19,7 +19,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.kesequl.app.util.function.JSONConverter;
 import java.io.InputStream;
-import java.util.Collection;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -28,7 +27,8 @@ import javax.swing.JOptionPane;
  * @author user65
  */
 public class Client {
-    public static final String BASE_HOST = "https://kesequl.exposei.com/";
+    // public static final String BASE_HOST = "https://kesequl.exposei.com/";
+    public static final String BASE_HOST = "http://localhost/kesequl-alpha/";
     public static final String HOST_API = BASE_HOST + "Api/";
     public static final String BASE_LAPORAN = BASE_HOST + "laporan/";
     public static final String HOST_LAPORAN_VOTING = BASE_LAPORAN + "voting/";
@@ -217,7 +217,7 @@ public class Client {
                         user.setToken(data.getToken());
                         user.setUang(data.getUang());
                         user.setEmail(data.getEmail());
-                        user.setAktif(data.isAktif());
+                        user.setStatus(data.getStatus());
                         user.setKeterangan(data.getKeterangan());
                         user.setIdUser(data.getIdUser());
                         
@@ -241,6 +241,7 @@ public class Client {
     }
     
     public static void prepareVariable(User data) {
+        Commands._extra.put("user:id", String.valueOf(data.getIdUser()));
         Commands._extra.put("user:username", data.getUsername());
         Commands._extra.put("user:token", data.getToken());
     }
