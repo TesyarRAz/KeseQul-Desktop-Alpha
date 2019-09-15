@@ -745,6 +745,8 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(framePilihSiswa, "Input tidak boleh kosong");
                 return;
             }
+
+            txtUsername.setText("");
             
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
             req.setUrl("siswa/datauser");

@@ -576,8 +576,8 @@ public final class KelolaVoting extends javax.swing.JFrame {
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin diselesaikan ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/editevent?token=" + user.getToken());
-            req.setVal("id_event_voting=" + votingS.getIdEventVoting() + "&status=false");
+            req.setUrl("voting/statusevent?token=" + user.getToken());
+            req.setVal("id_event_voting=" + votingS.getIdEventVoting() + "&status=0");
             
             Client.executeConnection(req, null, new KesequlHttpCallback() {
                 @Override
