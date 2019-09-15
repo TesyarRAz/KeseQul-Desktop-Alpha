@@ -88,12 +88,6 @@ public final class KelolaGuru extends javax.swing.JFrame {
         jLabel16 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
-        jLabel13 = new javax.swing.JLabel();
-        txtUsername = new javax.swing.JTextField();
-        jLabel15 = new javax.swing.JLabel();
-        txtPassword = new javax.swing.JPasswordField();
-        jLabel18 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         txtGambar = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -175,14 +169,6 @@ public final class KelolaGuru extends javax.swing.JFrame {
 
         jLabel19.setText(":");
 
-        jLabel13.setText("Username");
-
-        jLabel15.setText("Password");
-
-        jLabel18.setText(":");
-
-        jLabel17.setText(":");
-
         jButton1.setText("Gambar");
 
         txtGambar.setEditable(false);
@@ -198,23 +184,6 @@ public final class KelolaGuru extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel18)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPassword))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel17)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtUsername))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -255,7 +224,7 @@ public final class KelolaGuru extends javax.swing.JFrame {
                                 .addComponent(jButton1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtGambar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(174, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,16 +262,6 @@ public final class KelolaGuru extends javax.swing.JFrame {
                     .addComponent(jLabel16)
                     .addComponent(jLabel19)
                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel17)
-                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel18)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -466,10 +425,8 @@ public final class KelolaGuru extends javax.swing.JFrame {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String tanggal_lahir = txtLahir.getDate() != null ? dateFormat.format(txtLahir.getDate()) : "";
         String email = txtEmail.getText().trim();
-        String username = txtUsername.getText().trim();
-        String password = String.valueOf(txtPassword.getPassword()).trim();
         
-        if (nip.isEmpty() || nama.isEmpty() || gender.isEmpty() || tanggal_lahir.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty()) {
+        if (nip.isEmpty() || nama.isEmpty() || gender.isEmpty() || tanggal_lahir.isEmpty() || email.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Tidak boleh ada inputan yang kosong");
             return;
         }
@@ -481,9 +438,7 @@ public final class KelolaGuru extends javax.swing.JFrame {
                 "&nama=" + nama + 
                 "&gender=" + gender + 
                 "&tanggal_lahir=" + tanggal_lahir + 
-                "&email=" + email + 
-                "&username=" + username + 
-                "&password=" + password
+                "&email=" + email
         );
         Client.executeConnection(req, null, new KesequlHttpCallback() {
             @Override
@@ -503,8 +458,6 @@ public final class KelolaGuru extends javax.swing.JFrame {
                         rbL.setSelected(true);
                         txtLahir.setDate(null);
                         txtEmail.setText("");
-                        txtUsername.setText("");
-                        txtPassword.setText("");
                     }
                     
                     JOptionPane.showMessageDialog(KelolaGuru.this, pesan);
@@ -542,7 +495,6 @@ public final class KelolaGuru extends javax.swing.JFrame {
             // Harus dikurangi 1900, karena library Date otomatis menambahkan 1900
             txtLahir.setDate(new Date(guruS.getTtl().getYear() - 1900, guruS.getTtl().getMonthValue(), guruS.getTtl().getDayOfMonth()));
             rbL.setSelected(guruS.getGender() == 'L');
-            txtUsername.setText(guruS.getUser().getUsername());
             txtEmail.setText(guruS.getUser().getEmail());
         } else {
             String nip = txtNip.getText().trim();
@@ -551,10 +503,8 @@ public final class KelolaGuru extends javax.swing.JFrame {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String tanggal_lahir = txtLahir.getDate() != null ? dateFormat.format(txtLahir.getDate()) : "";
             String email = txtEmail.getText().trim();
-            String username = txtUsername.getText().trim();
-            String password = String.valueOf(txtPassword.getPassword()).trim();
             
-            if (nip.isEmpty() || nama.isEmpty() || gender.isEmpty() || tanggal_lahir.isEmpty() || email.isEmpty() || username.isEmpty() || password.isEmpty()) {
+            if (nip.isEmpty() || nama.isEmpty() || gender.isEmpty() || tanggal_lahir.isEmpty() || email.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Tidak boleh ada inputan yang kosong");
                 return;
             }
@@ -567,9 +517,7 @@ public final class KelolaGuru extends javax.swing.JFrame {
                 "&nama=" + nama + 
                 "&gender=" + gender + 
                 "&tanggal_lahir=" + tanggal_lahir + 
-                "&email=" + email + 
-                "&username=" + username + 
-                "&password=" + password
+                "&email=" + email
             );
             
             Client.executeConnection(req, null, new KesequlHttpCallback() {
@@ -585,8 +533,6 @@ public final class KelolaGuru extends javax.swing.JFrame {
                             rbL.setSelected(true);
                             txtLahir.setDate(null);
                             txtEmail.setText("");
-                            txtUsername.setText("");
-                            txtPassword.setText("");
                         }
                         JOptionPane.showMessageDialog(KelolaGuru.this, pesan);
                     }
@@ -706,11 +652,7 @@ public final class KelolaGuru extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -732,7 +674,5 @@ public final class KelolaGuru extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser txtLahir;
     private javax.swing.JTextField txtNama;
     private javax.swing.JTextField txtNip;
-    private javax.swing.JPasswordField txtPassword;
-    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }
