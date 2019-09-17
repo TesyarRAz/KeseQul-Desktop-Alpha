@@ -12,14 +12,15 @@ import com.kesequl.app.entity.User;
 import com.kesequl.app.network.Client;
 import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.IntSupplier;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
@@ -105,14 +106,6 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         btnCariWakil = new javax.swing.JButton();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        txtVisi = new javax.swing.JTextArea();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        txtMisi = new javax.swing.JTextArea();
-        jLabel19 = new javax.swing.JLabel();
-        jLabel20 = new javax.swing.JLabel();
         btnTambah = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
@@ -307,22 +300,6 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
             }
         });
 
-        jLabel16.setText("Visi");
-
-        jLabel18.setText(":");
-
-        txtVisi.setColumns(20);
-        txtVisi.setRows(5);
-        jScrollPane2.setViewportView(txtVisi);
-
-        txtMisi.setColumns(20);
-        txtMisi.setRows(5);
-        jScrollPane3.setViewportView(txtMisi);
-
-        jLabel19.setText("Misi");
-
-        jLabel20.setText(":");
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -330,33 +307,26 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel18)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addComponent(txtNamaTeam))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel20)
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCariKetua))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCariWakil)))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCariKetua))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCariWakil)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -377,18 +347,6 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
                     .addComponent(jLabel7)
                     .addComponent(jLabel8)
                     .addComponent(btnCariWakil))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel16)
-                        .addComponent(jLabel18))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel19)
-                        .addComponent(jLabel20)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -458,7 +416,7 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(lblNamaEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -485,36 +443,36 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        btnRefresh.setEnabled(false);
-        
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
         req.setUrl("voting/team?as=admin&token=" + user.getToken() + "&id_event_voting=" + eventVoting.getIdEventVoting());
-        Client.executeConnectionList(req, NominasiTeam.class, new KesequlHttpCallback<List<NominasiTeam>>() {
+        
+        Client.executeForResultList(true, null, req, NominasiTeam.class, new KesequlHttpCallback<NominasiTeam>() {
+            DefaultTableModel model;
+            
             @Override
-            public void onSuccess(int status, String pesan, List<NominasiTeam> data) {
+            public void onPrepare() {
+                btnRefresh.setEnabled(false);
+                
+                model = (DefaultTableModel) table.getModel();
+                model.setNumRows(0);
+
+                listTeam.clear();
+            }
+            
+            @Override
+            public void onSuccess(int status, String pesan, NominasiTeam data) {
                 if (!Client.isTokenExpired(KelolaTeamVoting.this, status, user)) {
                     if (status == 1) {
-                        DefaultTableModel model = (DefaultTableModel) table.getModel();
-                        model.setNumRows(0);
-
-                        listTeam.clear();
-                        listTeam.addAll(data);
-
-                        if (listTeam != null) {
-                            listTeam.forEach(team -> {
-                                model.addRow(new Object[] {
-                                    team.getNama(),
-                                    team.getNamaKetua() + " ( " + team.getKelasKetua() + " )",
-                                    team.getNamaWakil() + " ( " + team.getKelasWakil() + " )"
-                                });
+                        if (data != null) {
+                            listTeam.add(data);
+                            model.addRow(new Object[] {
+                                data.getNama(),
+                                data.getNamaKetua() + " ( " + data.getKelasKetua() + " )",
+                                data.getNamaWakil() + " ( " + data.getKelasWakil() + " )"
                             });
                         }
-                        if (listTeam.size()<1)
-                            model.removeRow(0);
-                        table.setModel(model);
                     }
                 }
-                
             }
 
             @Override
@@ -532,7 +490,6 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
                 btnRefresh.setEnabled(true);
             }
         });
-        
         
     }//GEN-LAST:event_btnRefreshActionPerformed
 
@@ -552,60 +509,62 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
         String namaTeam = txtNamaTeam.getText().trim();
-        String visi = txtVisi.getText().trim();
-        String misi = txtMisi.getText().trim();
         
-        if (namaTeam.isEmpty() || visi.isEmpty() || misi.isEmpty() || idKetua == -1 || idWakil == -1) {
+        if (namaTeam.isEmpty() || idKetua == -1 || idWakil == -1) {
             JOptionPane.showMessageDialog(this, "Input tidak boleh kosong");
             return;
         }
         
-        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-        req.setUrl("voting/tambahteam?token=" + user.getToken());
-        req.setVal(
-                "id_event_voting=" + eventVoting.getIdEventVoting() + 
-                "&nama=" + namaTeam + 
-                "&id_ketua=" + idKetua +
-                "&id_wakil=" + idWakil +
-                "&visi=" + visi +
-                "&misi=" + misi
-        );
-        Client.executeConnection(req, null, new KesequlHttpCallback() {
-            @Override
-            public void onPrepare() {
-                btnTambah.setEnabled(false);
-            }
-            @Override
-            public void onSuccess(int status, String pesan, Object data) {
-                if (!Client.isTokenExpired(KelolaTeamVoting.this, status, user)) {
-                    if (status == 1) {
-                        btnTambah.setEnabled(true);
-                        btnRefreshActionPerformed(evt);
-                        
-                        txtNamaTeam.setText("");
-                        txtVisi.setText("");
-                        txtMisi.setText("");
-                        idKetua = -1;
-                        idWakil = -1;
-                        btnCariKetua.setText("-- Pilih Ketua --");
-                        btnCariWakil.setText("-- Pilih Wakil --");
-                    }
-                    
-                    JOptionPane.showMessageDialog(KelolaTeamVoting.this, pesan);
-                }
-            }
+        try {
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+            req.setUrl("voting/tambahteam?token=" + user.getToken());
 
-            @Override
-            public void onFailed(Exception ex) {
-                JOptionPane.showMessageDialog(KelolaTeamVoting.this, ex);
-            }
-            
-            @Override
-            public void onDone() {
-                btnTambah.setEnabled(true);
-                btnRefreshActionPerformed(evt);
-            }
-        });
+            UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                Arrays.asList(
+                    new BasicNameValuePair("id_event_voting", String.valueOf(eventVoting.getIdEventVoting())),
+                    new BasicNameValuePair("nama", namaTeam),
+                    new BasicNameValuePair("id_ketua", String.valueOf(idKetua)),
+                    new BasicNameValuePair("id_wakil", String.valueOf(idWakil))
+                )
+            );
+
+            Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                @Override
+                public void onPrepare() {
+                    btnTambah.setEnabled(false);
+                }
+
+                @Override
+                public void onSuccess(int status, String pesan, Object data) {
+                    if (!Client.isTokenExpired(KelolaTeamVoting.this, status, user)) {
+                        if (status == 1) {
+                            editMode = false;
+                            editEntity = null;
+
+                            txtNamaTeam.setText("");
+                            idKetua = -1;
+                            idWakil = -1;
+                            btnCariKetua.setText("-- Pilih Ketua --");
+                            btnCariWakil.setText("-- Pilih Wakil --");
+                        }
+                        JOptionPane.showMessageDialog(KelolaTeamVoting.this, pesan);
+                    }
+                }
+
+                @Override
+                public void onFailed(Exception ex) {
+                    JOptionPane.showMessageDialog(KelolaTeamVoting.this, ex.getMessage());
+                }
+
+                @Override
+                public void onDone() {
+                    btnTambah.setEnabled(true);
+                    btnRefreshActionPerformed(evt);
+                }
+            });
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -622,70 +581,73 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
             editEntity = teamS;
             
             txtNamaTeam.setText(teamS.getNama());
-            txtVisi.setText(teamS.getVisi());
-            txtMisi.setText(teamS.getMisi());
             idKetua = teamS.getIdKetua();
             idWakil = teamS.getIdWakil();
             btnCariKetua.setText(teamS.getNamaKetua() + " ( " + teamS.getKelasKetua() + " )");
             btnCariWakil.setText(teamS.getNamaWakil() + " ( " + teamS.getKelasWakil() + " )");
         } else {
             String namaTeam = txtNamaTeam.getText().trim();
-            String visi = txtVisi.getText().trim();
-            String misi = txtMisi.getText().trim();
 
-            if (namaTeam.isEmpty() || visi.isEmpty() || misi.isEmpty() || idKetua == -1 || idWakil == -1) {
+            if (namaTeam.isEmpty() || idKetua == -1 || idWakil == -1) {
                 JOptionPane.showMessageDialog(this, "Input tidak boleh kosong");
                 return;
             }
             
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/editteam?token=" + user.getToken());
-            req.setVal(
-                "id_team=" + editEntity.getIdNominasiTeam() +
-                "&nama=" + namaTeam + 
-                "&id_ketua=" + idKetua +
-                "&id_wakil=" + idWakil +
-                "&visi=" + visi +
-                "&misi=" + misi
-            );
-            
-            Client.executeConnection(req, null, new KesequlHttpCallback() {
-                @Override
-                public void onSuccess(int status, String pesan, Object data) {
-                    if (!Client.isTokenExpired(KelolaTeamVoting.this, status, user)) {
-                        if (status == 1) {
-                            editMode = false;
-                            editEntity = null;
-                            
-                            txtNamaTeam.setText("");
-                            txtVisi.setText("");
-                            txtMisi.setText("");
-                            idKetua = -1;
-                            idWakil = -1;
-                            btnCariKetua.setText("-- Pilih Ketua --");
-                            btnCariWakil.setText("-- Pilih Wakil --");
-                        }
-                        JOptionPane.showMessageDialog(KelolaTeamVoting.this, pesan);
-                    }
-                }
+            try {
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                req.setUrl("voting/editteam?token=" + user.getToken());
 
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(KelolaTeamVoting.this, ex.getMessage());
-                }
-                
-                @Override
-                public void onDone() {
-                    btnRefresh.setEnabled(!editMode);
-                    btnTambah.setEnabled(!editMode);
-                    btnEdit.setText(!editMode ? "Edit" : "Terapkan");
-                    btnHapus.setEnabled(!editMode);
-                    
-                    btnRefreshActionPerformed(evt);
-                }
-            });
+                UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                    Arrays.asList(
+                        new BasicNameValuePair("id_team", String.valueOf(editEntity.getIdNominasiTeam())),
+                        new BasicNameValuePair("nama", namaTeam),
+                        new BasicNameValuePair("id_ketua", String.valueOf(idKetua)),
+                        new BasicNameValuePair("id_wakil", String.valueOf(idWakil))
+                    )
+                );
+                Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                    @Override
+                    public void onPrepare() {
+                        btnEdit.setEnabled(false);
+                    }
+
+                    @Override
+                    public void onSuccess(int status, String pesan, Object data) {
+                        if (!Client.isTokenExpired(KelolaTeamVoting.this, status, user)) {
+                            if (status == 1) {
+                                editMode = false;
+                                editEntity = null;
+
+                                txtNamaTeam.setText("");
+                                idKetua = -1;
+                                idWakil = -1;
+                                btnCariKetua.setText("-- Pilih Ketua --");
+                                btnCariWakil.setText("-- Pilih Wakil --");
+                            }
+                            JOptionPane.showMessageDialog(KelolaTeamVoting.this, pesan);
+                        }
+                    }
+
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(KelolaTeamVoting.this, ex.getMessage());
+                    }
+
+                    @Override
+                    public void onDone() {
+                        btnRefresh.setEnabled(!editMode);
+                        btnTambah.setEnabled(!editMode);
+                        btnEdit.setEnabled(true);
+                        btnEdit.setText(!editMode ? "Edit" : "Terapkan");
+                        btnHapus.setEnabled(!editMode);
+
+                        btnRefreshActionPerformed(evt);
+                    }
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
-        
         btnRefresh.setEnabled(!editMode);
         btnTambah.setEnabled(!editMode);
         btnEdit.setText(!editMode ? "Edit" : "Terapkan");
@@ -702,29 +664,42 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
         NominasiTeam teamS = listTeam.get(row);
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin dihapus ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            btnHapus.setEnabled(false);
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/hapusteam?token=" + user.getToken());
-            req.setVal("id_team=" + teamS.getIdNominasiTeam());
-            
-            Client.executeConnection(req, null, new KesequlHttpCallback() {
-                @Override
-                public void onSuccess(int status, String pesan, Object data) {
-                    if (!Client.isTokenExpired(KelolaTeamVoting.this, status, user))
-                        JOptionPane.showMessageDialog(KelolaTeamVoting.this, pesan);
-                }
-
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(KelolaTeamVoting.this, ex.getMessage());
-                }
+            try {
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                req.setUrl("voting/hapusteam?token=" + user.getToken());
                 
-                @Override
-                public void onDone() {
-                    btnHapus.setEnabled(true);
-                    btnRefreshActionPerformed(evt);
-                }
-            });
+                UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                    Arrays.asList(
+                        new BasicNameValuePair("id_team", String.valueOf(teamS.getIdNominasiTeam()))
+                    )
+                );
+                
+                Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                    @Override
+                    public void onPrepare() {
+                        btnHapus.setEnabled(false);
+                    }
+                    
+                    @Override
+                    public void onSuccess(int status, String pesan, Object data) {
+                        if (!Client.isTokenExpired(KelolaTeamVoting.this, status, user))
+                            JOptionPane.showMessageDialog(KelolaTeamVoting.this, pesan);
+                    }
+
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(KelolaTeamVoting.this, ex.getMessage());
+                    }
+
+                    @Override
+                    public void onDone() {
+                        btnHapus.setEnabled(true);
+                        btnRefreshActionPerformed(evt);
+                    }
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
@@ -749,9 +724,9 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
             txtUsername.setText("");
             
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
-            req.setUrl("siswa/datauser");
-            req.setVal("token=" + user.getToken() + "&username=" + username);
-            Client.executeConnection(req, Siswa.class, new KesequlHttpCallback<Siswa>() {
+            req.setUrl("siswa/datauser?token=" + user.getToken() + "&username=" + username);
+            
+            Client.executeForResult(true, null, req, Siswa.class, new KesequlHttpCallback<Siswa>() {
                 @Override
                 public void onPrepare() {
                     btnCari.setEnabled(false);
@@ -826,12 +801,8 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -844,16 +815,12 @@ public final class KelolaTeamVoting extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblGenderSiswa;
     private javax.swing.JLabel lblKelasSiswa;
     private javax.swing.JLabel lblNamaEvent;
     private javax.swing.JLabel lblNamaSiswa;
     private javax.swing.JTable table;
-    private javax.swing.JTextArea txtMisi;
     private javax.swing.JTextField txtNamaTeam;
     private javax.swing.JTextField txtUsername;
-    private javax.swing.JTextArea txtVisi;
     // End of variables declaration//GEN-END:variables
 }

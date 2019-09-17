@@ -4,6 +4,11 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="rb_jk">
     </Component>
+    <Component class="javax.swing.JFileChooser" name="chooserImage">
+      <Properties>
+        <Property name="fileHidingEnabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
@@ -382,6 +387,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Gambar"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel20">
               <Properties>

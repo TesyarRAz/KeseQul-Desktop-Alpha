@@ -24,8 +24,6 @@ public class NominasiTeam implements JSONConverter{
     private int idWakil;
     private String namaWakil;
     private String kelasWakil;
-    private String visi;
-    private String misi;
     private String keterangan;
 
     public int getIdNominasiTeam() {
@@ -100,22 +98,6 @@ public class NominasiTeam implements JSONConverter{
         this.kelasWakil = kelasWakil;
     }
 
-    public String getVisi() {
-        return visi;
-    }
-
-    public void setVisi(String visi) {
-        this.visi = visi;
-    }
-
-    public String getMisi() {
-        return misi;
-    }
-
-    public void setMisi(String misi) {
-        this.misi = misi;
-    }
-
     public String getKeterangan() {
         return keterangan;
     }
@@ -135,8 +117,6 @@ public class NominasiTeam implements JSONConverter{
         idWakil = json.getInt("id_wakil");
         namaWakil = json.getString("nama_wakil");
         kelasWakil = json.getString("kelas_wakil");
-        visi = json.getString("visi");
-        misi = json.getString("misi");
         keterangan = json.optString("keterangan");
     }
     

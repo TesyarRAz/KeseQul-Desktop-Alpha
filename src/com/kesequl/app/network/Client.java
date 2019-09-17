@@ -8,19 +8,25 @@ package com.kesequl.app.network;
 import com.kesequl.app.Login;
 import com.kesequl.app.entity.User;
 import com.kesequl.app.network.KesequlHttpRequest.Method;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import com.kesequl.app.util.function.JSONConverter;
-import java.io.InputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
@@ -33,206 +39,182 @@ public class Client {
     public static final String BASE_LAPORAN = BASE_HOST + "laporan/";
     public static final String HOST_LAPORAN_VOTING = BASE_LAPORAN + "voting/";
     
-    public static final int CREATE = 1;
-    public static final int READ = 2;
-    public static final int UPDATE = 3;
-    public static final int DELETE = 4;
-    
-    public static <T extends JSONConverter> void executeConnection(KesequlHttpRequest kesequlHttp, Class<T> _class, KesequlHttpCallback<T> callback) {
-        executeConnection(true, kesequlHttp, _class, callback);
-    }
-    
-    public static String getResultFromURL(KesequlHttpRequest kesequlHttp) {
-        try {
-            String paramGet = (kesequlHttp.getMethod() == Method.GET && kesequlHttp.getVal() != null && !kesequlHttp.getVal().isEmpty()) ? "?" + kesequlHttp.getVal() : "";
-            HttpURLConnection con = (HttpURLConnection) URI.create(HOST_API + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
-
-            con.setRequestMethod(kesequlHttp.getMethod().getParam());
-            con.setRequestProperty("Accept", "*/*");
-            con.setUseCaches(false);
-
-            if (kesequlHttp.getMethod() != Method.GET) {
-                con.setDoOutput(true);
-                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                con.getOutputStream().write(kesequlHttp.getVal().getBytes());
-                con.getOutputStream().flush();
-                con.getOutputStream().close();
-            } else {
-                con.setDoInput(true);
-            }
-            
-            String data = "";
-            
-            InputStream stream = con.getResponseCode() == 200 ? con.getInputStream() : con.getErrorStream();
-            
-            for (int c; (c = stream.read()) != -1;) {
-                data += (char) c;
-            }
-            
-            stream.close();
-            
-            return data;
-        } catch (Exception ex) {
-            return ex.toString();
+    public static final String executeGetResult(HttpEntity entity, KesequlHttpRequest request)throws IOException {
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpUriRequest uriRequest = null;
+        if (request.getMethod() == Method.GET) {
+            uriRequest = new HttpGet(request.getUrl());
         }
+        else if(request.getMethod() == Method.POST) {
+            HttpPost post = new HttpPost(request.getUrl());
+            post.setEntity(entity);
+
+            uriRequest = post;
+        }
+        String data = "";
+        if (uriRequest != null) {
+            HttpResponse response = client.execute(uriRequest);
+            for (int c; (c = response.getEntity().getContent().read()) != -1;)
+                data += (char) c;
+        }
+        
+        return data;
     }
     
-    public static <T extends JSONConverter> void executeConnection(boolean async, KesequlHttpRequest kesequlHttp, Class<T> _class, KesequlHttpCallback<T> callback) {
+    public static final <T extends JSONConverter> void executeForResult(boolean async, HttpEntity entity, KesequlHttpRequest request, Class<T> _class, KesequlHttpCallback<T> _callback) {
         Runnable runnable = () -> {
-            callback.onPrepare();
+            _callback.onPrepare();
             try {
-                String paramGet = (kesequlHttp.getMethod() == Method.GET && kesequlHttp.getVal() != null && !kesequlHttp.getVal().isEmpty()) ? "?" + kesequlHttp.getVal() : "";
-                HttpURLConnection con = (HttpURLConnection) URI.create(HOST_API + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
-                
-                con.setRequestMethod(kesequlHttp.getMethod().getParam());
-                con.setRequestProperty("Accept", "application/json");
-                con.setUseCaches(false);
-                
-                if (kesequlHttp.getMethod() != Method.GET) {
-                    con.setDoOutput(true);
-                    con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                    con.getOutputStream().write(kesequlHttp.getVal().getBytes());
-                    con.getOutputStream().flush();
-                    con.getOutputStream().close();
-                } else {
-                    con.setDoInput(true);
-                }
-                
-                InputStream stream = con.getResponseCode() == 200 ? con.getInputStream() : con.getErrorStream();
-            
-                String data = "";
-                for (int c; (c = stream.read()) != -1;) {
-                    data += (char) c;
-                }
-                
-                stream.close();
-                
-                try {
-                    JSONObject json = new JSONObject(data);
-
-                    T entity = null;
-                    if (_class != null) {
-                        entity = _class.getDeclaredConstructor().newInstance();
-                        if (json.optJSONObject("data") != null)
-                            entity.fromJson(json.optJSONObject("data"));
+                // Cara agar auto konek ke host api
+                request.setUrl(HOST_API + request.getUrl());
+                executeEntity(executeGetResult(entity, request), _class, new KesequlHttpCallback<T>() {
+                    @Override
+                    public void onSuccess(int status, String pesan, T data) {
+                        _callback.onSuccess(status, pesan, data);
                     }
 
-                    callback.onSuccess(json.getInt("status"), json.getString("pesan"), entity);
-                } catch (JSONException ex) {
-                    System.err.println(data);
-                    callback.onFailed(ex);
-                }
-            } catch (IOException | IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
-                ex.printStackTrace(System.err);
-                callback.onFailed(ex);
+                    @Override
+                    public void onFailed(Exception ex) {
+                        _callback.onFailed(ex);
+                    }
+                });
+            } catch (Exception ex) {
+                _callback.onFailed(ex);
             }
             
-            callback.onDone();
+            _callback.onDone();
         };
         
-        if (async)
-            new Thread(runnable).start();
-        else
-            runnable.run();
+        if (async) new Thread(runnable).start();
+        else runnable.run();
     }
     
-    public static<T extends JSONConverter> void executeConnectionList(KesequlHttpRequest kesequlHttp, Class<T> _class, KesequlHttpCallback<List<T>> callback) {
-        new Thread(() -> {
-            callback.onPrepare();
+    public static final <T extends JSONConverter> void executeForResultList(boolean async, HttpEntity entity, KesequlHttpRequest request, Class<T> _class, KesequlHttpCallback<T> _callback) {
+        Runnable runnable = () -> {
+            _callback.onPrepare();
             try {
-                String paramGet = (kesequlHttp.getMethod() == Method.GET && kesequlHttp.getVal() != null && !kesequlHttp.getVal().isEmpty()) ? "?" + kesequlHttp.getVal() : "";
-                HttpURLConnection con = (HttpURLConnection) URI.create(HOST_API + kesequlHttp.getUrl() + paramGet).toURL().openConnection();
-                
-                con.setRequestMethod(kesequlHttp.getMethod().getParam());
-                con.setRequestProperty("Accept", "application/json");
-                con.setUseCaches(false);
-                
-                if (kesequlHttp.getMethod() != Method.GET) {
-                    con.setDoOutput(true);
-                    con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                    con.getOutputStream().write(kesequlHttp.getVal().getBytes());
-                    con.getOutputStream().flush();
-                    con.getOutputStream().close();
-                } else {
-                    con.setDoInput(true);
-                }
-                
-                String data = "";
-                InputStream stream = con.getResponseCode() == 200 ? con.getInputStream() : con.getErrorStream();
-            
-                for (int c; (c = stream.read()) != -1;) {
-                    data += (char) c;
-                }
-                stream.close();
-                
-                try {
-                    JSONObject json = new JSONObject(data);
-
-                    JSONArray jsa = json.optJSONArray("data");
-                    List<T> list = new ArrayList<>();
-
-                    if (jsa != null) {
-                        for (int i=0; i<jsa.length(); i++) {
-                            T entity = _class.getDeclaredConstructor().newInstance();
-                            if (jsa.getJSONObject(i) != null)
-                                entity.fromJson(jsa.getJSONObject(i));
-
-                            list.add(entity);
-                        }
+                // Cara agar auto konek ke host api
+                request.setUrl(HOST_API + request.getUrl());
+                executeEntityList(executeGetResult(entity, request), _class, new KesequlHttpCallback<T>() {
+                    @Override
+                    public void onSuccess(int status, String pesan, T data) {
+                        _callback.onSuccess(status, pesan, data);
                     }
 
-                    callback.onSuccess(json.getInt("status"), json.getString("pesan"), list);
-
-                } catch (JSONException ex) {
-                    System.err.println(data);
-                    callback.onFailed(ex);
-                }
-            } catch (IOException | IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
-                callback.onFailed(ex);
+                    @Override
+                    public void onFailed(Exception ex) {
+                        _callback.onFailed(ex);
+                    }
+                });
+            } catch (Exception ex) {
+                _callback.onFailed(ex);
             }
-            callback.onDone();
-        }).start();
+            
+            _callback.onDone();
+        };
+        
+        if (async) new Thread(runnable).start();
+        else runnable.run();
+    }
+    
+    public static final <T extends JSONConverter> void executeEntity(String strJson, Class<T> _class, KesequlHttpCallback<T> _callback) {
+        _callback.onPrepare();
+        
+        try {
+            if (!strJson.isEmpty()) {
+                JSONObject json = new JSONObject(strJson);
+                JSONObject dataEntity = json.optJSONObject("data");
+                T entity = null;
+                if (dataEntity != null) {
+                    entity = _class.getDeclaredConstructor().newInstance();
+                    entity.fromJson(dataEntity);
+                }
+                _callback.onSuccess(json.optInt("status", 0), json.optString("pesan", ""), entity);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            System.err.println(strJson);
+            _callback.onFailed(ex);
+        }
+        
+        _callback.onDone();
+    }
+    
+    public static final <T extends JSONConverter> void executeEntityList(String strJson, Class<T> _class, KesequlHttpCallback<T> _callback) {
+        _callback.onPrepare();
+        
+        try {
+            if (!strJson.isEmpty()) {
+                JSONObject json = new JSONObject(strJson);
+                JSONArray dataEntity = json.optJSONArray("data");
+                int status = json.optInt("status", 0);
+                String pesan = json.optString("pesan" ,"");
+                
+                if (dataEntity != null) {
+                    for (int i=0; i<dataEntity.length(); i++) {
+                        JSONObject jsonItem = dataEntity.getJSONObject(i);
+                        T entity = _class.getDeclaredConstructor().newInstance();
+                        entity.fromJson(jsonItem);
+                        
+                        _callback.onSuccess(status, pesan, entity);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace(System.err);
+            System.err.println(strJson);
+            _callback.onFailed(ex);
+        }
+        
+        _callback.onDone();
     }
     
     public static boolean isTokenExpired(JFrame frame, int status, User user) {
         if (status == 3) {
             KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
             req.setUrl("user/login");
-            req.setVal("username=" + user.getUsername() + "&password=" + user.getPassword());
             class BoolVal {
                 boolean val;
             }
             final BoolVal boolVal = new BoolVal();
-            Client.executeConnection(req, User.class, new KesequlHttpCallback<User>() {
-                @Override
-                public void onSuccess(int status, String pesan, User data) {
-                    if(status == 0){
-                        boolVal.val = true;
-                        JOptionPane.showMessageDialog(frame, "Sesi Habis, Silahkan login kembali");
-                        frame.dispose();
-                        new Login().setVisible(true);
-                    } else if(status == 1){
+            List<NameValuePair> params = new ArrayList<>();
+            params.add(new BasicNameValuePair("username", user.getUsername()));
+            params.add(new BasicNameValuePair("password", user.getPassword()));
+            try {
+                executeForResult(true, new UrlEncodedFormEntity(params), req, User.class, new KesequlHttpCallback<User>() {
+                    @Override
+                    public void onSuccess(int status, String pesan, User data) {
+                        if(status == 0){
+                            boolVal.val = true;
+                            JOptionPane.showMessageDialog(frame, "Sesi Habis, Silahkan login kembali");
+                            frame.dispose();
+                            
+                            new Login().setVisible(true);
+                        } else if(status == 1){
 
-                        user.setPerans(data.getPerans());
-                        user.setToken(data.getToken());
-                        user.setUang(data.getUang());
-                        user.setEmail(data.getEmail());
-                        user.setStatus(data.getStatus());
-                        user.setKeterangan(data.getKeterangan());
-                        user.setIdUser(data.getIdUser());
-                        
-                        prepareVariable(user);
+                            user.setPerans(data.getPerans());
+                            user.setToken(data.getToken());
+                            user.setUang(data.getUang());
+                            user.setEmail(data.getEmail());
+                            user.setStatus(data.getStatus());
+                            user.setKeterangan(data.getKeterangan());
+                            user.setIdUser(data.getIdUser());
 
-                        boolVal.val = false;
+                            prepareVariable(user);
+
+                            boolVal.val = false;
+                        }
                     }
-                }
 
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(frame, ex.getMessage());
-                    boolVal.val = true;
-                }
-            });
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(frame, ex.getMessage());
+                        boolVal.val = true;
+                    }
+                });
+            } catch (UnsupportedEncodingException ex) {
+                JOptionPane.showMessageDialog(frame, ex.getMessage());
+            }
             
             return boolVal.val;
         }
@@ -244,5 +226,7 @@ public class Client {
         Commands._extra.put("user:id", String.valueOf(data.getIdUser()));
         Commands._extra.put("user:username", data.getUsername());
         Commands._extra.put("user:token", data.getToken());
+        Commands._extra.put("host:api", HOST_API);
+        Commands._extra.put("host:base", BASE_HOST);
     }
 }

@@ -11,17 +11,23 @@ import com.kesequl.app.entity.User;
 import com.kesequl.app.network.Client;
 import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
@@ -52,6 +58,9 @@ public final class KelolaTU extends javax.swing.JFrame {
         this.admin = admin;
         this.parentRunnable = parentRunnable;
         
+        chooserImage.setAcceptAllFileFilterUsed(false);
+        chooserImage.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("File Gambar", "jpg", "png", "jpeg"));
+        
         btnRefreshActionPerformed(null);
     }
 
@@ -65,6 +74,7 @@ public final class KelolaTU extends javax.swing.JFrame {
     private void initComponents() {
 
         rb_jk = new javax.swing.ButtonGroup();
+        chooserImage = new javax.swing.JFileChooser();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
@@ -96,6 +106,8 @@ public final class KelolaTU extends javax.swing.JFrame {
         btnBan = new javax.swing.JButton();
         btnNext = new javax.swing.JButton();
         btnPrev = new javax.swing.JButton();
+
+        chooserImage.setFileHidingEnabled(false);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("TU");
@@ -169,6 +181,11 @@ public final class KelolaTU extends javax.swing.JFrame {
         txtGambar.setEditable(false);
 
         jButton1.setText("Gambar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel20.setText("Foto Profile");
 
@@ -371,50 +388,52 @@ public final class KelolaTU extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        btnRefresh.setEnabled(false);
-        
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
         req.setUrl("admin/alltu?token=" + user.getToken());
-        Client.executeConnectionList(req, Tu.class, new KesequlHttpCallback<List<Tu>>() {
+        
+        Client.executeForResultList(true, null, req, Tu.class, new KesequlHttpCallback<Tu>() {
+            private DefaultTableModel model;
+            
             @Override
-            public void onSuccess(int status, String pesan, List<Tu> data) {
-                if (!Client.isTokenExpired(KelolaTU.this, status, user)) {
-                    if (status == 1) {
-                        DefaultTableModel model = (DefaultTableModel) table.getModel();
-                        model.setNumRows(0);
-
-                        listTU.clear();
-                        listTU.addAll(data);
-
-                        if (listTU != null) {
-                            listTU.forEach(tu -> {
-                                model.addRow(new Object[] {
-                                    tu.getNip(),
-                                    tu.getUser().getUsername(),
-                                    tu.getUser().getEmail(),
-                                    tu.getNama(),
-                                    tu.getGender() == 'L' ? "Laki-Laki" : "Perempuan",
-                                    tu.getTtl().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                                });
-                            });
-                        }
-                        table.setModel(model);
-                    }
-                }
+            public void onPrepare() {
+                btnRefresh.setEnabled(false);
                 
+                model = (DefaultTableModel) table.getModel();
+                model.setRowCount(0);
+
+                listTU.clear();
+            }
+            
+            @Override
+            public void onSuccess(int status, String pesan, Tu data) {
+                if (data != null) {
+                    listTU.add(data);
+                    model.addRow(new Object[] {
+                        data.getNip(),
+                        data.getUser().getUsername(),
+                        data.getUser().getEmail(),
+                        data.getNama(),
+                        data.getGender() == 'L' ? "Laki-Laki" : "Perempuan",
+                        data.getTtl().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                    });
+                    
+                    table.repaint();
+                }
             }
 
             @Override
             public void onFailed(Exception ex) {
                 JOptionPane.showMessageDialog(KelolaTU.this, ex.getMessage());
             }
-
+            
             @Override
             public void onDone() {
                 if (parentRunnable != null) {
                     parentRunnable.run();
                     parentRunnable = null;
                 }
+                table.setModel(model);
+                
                 btnRefresh.setEnabled(true);
             }
         });
@@ -433,20 +452,29 @@ public final class KelolaTU extends javax.swing.JFrame {
             return;
         }
         
+        String locGambar = txtGambar.getText().trim();
+        
+        MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create()
+                .addTextBody("nip", nip)
+                .addTextBody("nama", nama)
+                .addTextBody("gender", gender)
+                .addTextBody("tanggal_lahir", tanggal_lahir)
+                .addTextBody("email", email);
+        
+        if (!locGambar.isEmpty()) {
+            File file = new File(txtGambar.getText());
+            
+            entityBuilder.addBinaryBody("gambar", file);
+        }
+        
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
         req.setUrl("tu/tambahtu?token=" + user.getToken());
-        req.setVal(
-                "nip=" + nip +
-                "&nama=" + nama + 
-                "&gender=" + gender + 
-                "&tanggal_lahir=" + tanggal_lahir + 
-                "&email=" + email
-        );
-        Client.executeConnection(req, null, new KesequlHttpCallback() {
+        Client.executeForResult(true, entityBuilder.build(), req, null, new KesequlHttpCallback() {
             @Override
             public void onPrepare() {
                 btnTambah.setEnabled(false);
             }
+            
             @Override
             public void onSuccess(int status, String pesan, Object data) {
                 if (!Client.isTokenExpired(KelolaTU.this, status, user)) {
@@ -459,6 +487,7 @@ public final class KelolaTU extends javax.swing.JFrame {
                         rbL.setSelected(true);
                         txtLahir.setDate(null);
                         txtEmail.setText("");
+                        txtGambar.setText("");
                     }
                     
                     JOptionPane.showMessageDialog(KelolaTU.this, pesan);
@@ -515,57 +544,70 @@ public final class KelolaTU extends javax.swing.JFrame {
                 return;
             }
             
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("tu/edittu?token=" + user.getToken());
-            req.setVal(
-                "id_user=" + editEntity.getUser().getIdUser() +
-                "&nip=" + nip +
-                "&nama=" + nama + 
-                "&gender=" + gender + 
-                "&tanggal_lahir=" + tanggal_lahir + 
-                "&email=" + email
-            );
-            
-            Client.executeConnection(req, null, new KesequlHttpCallback() {
-                @Override
-                public void onSuccess(int status, String pesan, Object data) {
-                    if (!Client.isTokenExpired(KelolaTU.this, status, user)) {
-                        if (status == 1) {
-                            editMode = false;
-                            editEntity = null;
-                            
-                            txtNip.setText("");
-                            txtNama.setText("");
-                            rbL.setSelected(true);
-                            txtLahir.setDate(null);
-                            txtEmail.setText("");
-                        }
-                        JOptionPane.showMessageDialog(KelolaTU.this, pesan);
-                    }
-                }
+            try {
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                req.setUrl("tu/edittu?token=" + user.getToken());
 
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(KelolaTU.this, ex.getMessage());
-                }
+                UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                    Arrays.asList(
+                        new BasicNameValuePair("id_user", String.valueOf(editEntity.getUser().getIdUser())),
+                        new BasicNameValuePair("nip", nip),
+                        new BasicNameValuePair("nama", nama),
+                        new BasicNameValuePair("gender", gender),
+                        new BasicNameValuePair("tanggal_lahir", tanggal_lahir),
+                        new BasicNameValuePair("email", email)
+                    )
+                );
                 
-                @Override
-                public void onDone() {
-                    btnRefresh.setEnabled(!editMode);
-                    btnBan.setEnabled(!editMode);
-                    btnTambah.setEnabled(!editMode);
-                    btnEdit.setText(!editMode ? "Edit" : "Terapkan");
-                    btnHapus.setEnabled(!editMode);
+                Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                    @Override
+                    public void onPrepare() {
+                        btnEdit.setEnabled(false);
+                    }
                     
-                    btnRefreshActionPerformed(evt);
-                }
-            });
+                    @Override
+                    public void onSuccess(int status, String pesan, Object data) {
+                        if (!Client.isTokenExpired(KelolaTU.this, status, user)) {
+                            if (status == 1) {
+                                editMode = false;
+                                editEntity = null;
+
+                                txtNip.setText("");
+                                txtNama.setText("");
+                                rbL.setSelected(true);
+                                txtLahir.setDate(null);
+                                txtEmail.setText("");
+                            }
+                            JOptionPane.showMessageDialog(KelolaTU.this, pesan);
+                        }
+                    }
+
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(KelolaTU.this, ex.getMessage());
+                    }
+
+                    @Override
+                    public void onDone() {
+                        btnRefresh.setEnabled(!editMode);
+                        btnBan.setEnabled(!editMode);
+                        btnTambah.setEnabled(!editMode);
+                        btnEdit.setText(!editMode ? "Edit" : "Terapkan");
+                        btnEdit.setEnabled(true);
+                        btnHapus.setEnabled(!editMode);
+
+                        btnRefreshActionPerformed(evt);
+                    }
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
-        
         btnRefresh.setEnabled(!editMode);
         btnBan.setEnabled(!editMode);
         btnTambah.setEnabled(!editMode);
         btnEdit.setText(!editMode ? "Edit" : "Terapkan");
+        btnEdit.setEnabled(true);
         btnHapus.setEnabled(!editMode);
     }//GEN-LAST:event_btnEditActionPerformed
 
@@ -579,29 +621,42 @@ public final class KelolaTU extends javax.swing.JFrame {
         Tu tuS = listTU.get(row);
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin dihapus ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            btnHapus.setEnabled(false);
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("tu/hapustu?token=" + user.getToken());
-            req.setVal("id_user=" + tuS.getUser().getIdUser());
-            
-            Client.executeConnection(req, null, new KesequlHttpCallback() {
-                @Override
-                public void onSuccess(int status, String pesan, Object data) {
-                    if (!Client.isTokenExpired(KelolaTU.this, status, user))
-                        JOptionPane.showMessageDialog(KelolaTU.this, pesan);
-                }
-
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(KelolaTU.this, ex.getMessage());
-                }
+            try {
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                req.setUrl("tu/hapustu?token=" + user.getToken());
                 
-                @Override
-                public void onDone() {
-                    btnHapus.setEnabled(true);
-                    btnRefreshActionPerformed(evt);
-                }
-            });
+                UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                    Arrays.asList(
+                        new BasicNameValuePair("id_user", String.valueOf(tuS.getUser().getIdUser()))
+                    )
+                );
+                
+                Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                    @Override
+                    public void onPrepare() {
+                        btnHapus.setEnabled(false);
+                    }
+                    
+                    @Override
+                    public void onSuccess(int status, String pesan, Object data) {
+                        if (!Client.isTokenExpired(KelolaTU.this, status, user))
+                            JOptionPane.showMessageDialog(KelolaTU.this, pesan);
+                    }
+
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(KelolaTU.this, ex.getMessage());
+                    }
+
+                    @Override
+                    public void onDone() {
+                        btnHapus.setEnabled(true);
+                        btnRefreshActionPerformed(evt);
+                    }
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
@@ -616,32 +671,53 @@ public final class KelolaTU extends javax.swing.JFrame {
         
         String reason = JOptionPane.showInputDialog(this, "Masukan Alasan Ban");
         if (reason != null) {
-            btnBan.setEnabled(false);
-            
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("user/ban?token=" + user.getToken());
-            req.setVal("id_user=" + tuS.getUser().getIdUser() + "&reason_ban=" + reason);
-            
-            Client.executeConnection(req, null, new KesequlHttpCallback() {
-                @Override
-                public void onSuccess(int status, String pesan, Object data) {
-                    if (!Client.isTokenExpired(KelolaTU.this, status, user))
-                        JOptionPane.showMessageDialog(KelolaTU.this, pesan);
-                }
+            try {
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                req.setUrl("user/ban?token=" + user.getToken());
 
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(KelolaTU.this, ex.getMessage());
-                }
+                UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                        Arrays.asList(
+                            new BasicNameValuePair("id_user", String.valueOf(tuS.getUser().getIdUser())),
+                            new BasicNameValuePair("reason_ban", reason)
+                        )
+                    );
                 
-                @Override
-                public void onDone() {
-                    btnBan.setEnabled(true);
-                    btnRefreshActionPerformed(evt);
-                }
-            });
+                Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                    @Override
+                    public void onPrepare() {
+                        btnBan.setEnabled(false);
+                    }
+                    
+                    @Override
+                    public void onSuccess(int status, String pesan, Object data) {
+                        if (!Client.isTokenExpired(KelolaTU.this, status, user))
+                            JOptionPane.showMessageDialog(KelolaTU.this, pesan);
+                    }
+
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(KelolaTU.this, ex.getMessage());
+                    }
+
+                    @Override
+                    public void onDone() {
+                        btnBan.setEnabled(true);
+                        btnRefreshActionPerformed(evt);
+                    }
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
     }//GEN-LAST:event_btnBanActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (chooserImage.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File file = chooserImage.getSelectedFile();
+            
+            txtGambar.setText(file.toString());
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -652,6 +728,7 @@ public final class KelolaTU extends javax.swing.JFrame {
     private javax.swing.JButton btnPrev;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JFileChooser chooserImage;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;

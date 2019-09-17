@@ -5,10 +5,16 @@
  */
 package com.kesequl.app.network;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
@@ -97,13 +103,29 @@ public class Commands {
                 val = parserVariable(val);
 
                 KesequlHttpRequest.Method M = null;
+                HttpEntity entity = null;
                 switch (method.toLowerCase()) {
                     case "get":
                         M = KesequlHttpRequest.Method.GET;
                         break;
-                    case "post":
+                    case "post": {
                         M = KesequlHttpRequest.Method.POST;
+                        List<NameValuePair> parameters = new ArrayList<>();
+                        String[] params = val.split("&");
+                        for (String param : params) {
+                            String[] values = param.split("=");
+                            String key = values[0];
+                            String value = values[1];
+                            
+                            parameters.add(new BasicNameValuePair(key, value));
+                        }
+                        try {
+                            entity = new UrlEncodedFormEntity(parameters);
+                        } catch (Exception ex) {
+                            return "Error : " + ex.getMessage();
+                        }
                         break;
+                    }
                     case "put":
                         M = KesequlHttpRequest.Method.PUT;
                         break;
@@ -117,7 +139,11 @@ public class Commands {
                 else if(url == null)
                     return "Url tidak boleh kosong";
 
-                return Client.getResultFromURL(new KesequlHttpRequest(M, url, val));
+                try {
+                    return Client.executeGetResult(entity, new KesequlHttpRequest(M, url));
+                } catch (Exception ex) {
+                    return ex.getMessage();
+                }
             case "echo":
                 String show = "";
                 for (String com : Arrays.copyOfRange(command, 1, command.length))

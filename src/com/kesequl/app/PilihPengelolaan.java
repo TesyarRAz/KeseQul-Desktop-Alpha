@@ -34,6 +34,7 @@ public final class PilihPengelolaan extends javax.swing.JFrame implements Runnab
         
         boolean valid = false;
         for (Peran peran : user.getPerans()) {
+            
             if (peran.getNamaLevel().toLowerCase().equals("admin") || peran.getNamaLevel().toLowerCase().equals("superadmin") || peran.getNamaLevel().toLowerCase().equals("tu")) {
                 valid = true;
             }

@@ -12,9 +12,12 @@ import com.kesequl.app.network.Client;
 import com.kesequl.app.network.Commands;
 import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
+import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
@@ -41,9 +44,9 @@ public final class PengelolaanAdmin extends javax.swing.JFrame {
         this.frameParent = frameParent;
         
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
-        req.setUrl("admin/data");
-        req.setVal("token=" + user.getToken());
-        Client.executeConnection(req, Admin.class, new KesequlHttpCallback<Admin>() {
+        req.setUrl("admin/data?token=" + user.getToken());
+        
+        Client.executeForResult(true, null, req, Admin.class, new KesequlHttpCallback<Admin>() {
             @Override
             public void onSuccess(int status, String pesan, Admin data) {
                 if (!Client.isTokenExpired(PengelolaanAdmin.this, status, user)) {
@@ -493,9 +496,9 @@ public final class PengelolaanAdmin extends javax.swing.JFrame {
             return;
         }
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
-        req.setUrl("user/unban");
-        req.setVal("token=" + user.getToken() + "&username=" + username);
-        Client.executeConnection(req, User.class, new KesequlHttpCallback<User>() {
+        req.setUrl("user/unban?token=" + user.getToken() + "&username=" + username);
+        
+        Client.executeForResult(true, null, req, User.class, new KesequlHttpCallback<User>() {
             @Override
             public void onPrepare() {
                 btnCari.setEnabled(false);
@@ -525,45 +528,54 @@ public final class PengelolaanAdmin extends javax.swing.JFrame {
                 btnPilihUnban.setEnabled(userUnban != null);
                 btnCari.setEnabled(true);
             }
-            
         });
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void btnPilihUnbanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPilihUnbanActionPerformed
         if (userUnban != null) {
             if (JOptionPane.showConfirmDialog(frameUnban, "Yakin ingin diunban ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-                req.setUrl("user/unban?token=" + user.getToken());
-                req.setVal("id_user=" + userUnban.getIdUser());
-                Client.executeConnection(req, null, new KesequlHttpCallback() {
-                    @Override
-                    public void onPrepare() {
-                        btnPilihUnban.setEnabled(false);
-                    }
+                try {
+                    KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                    req.setUrl("user/unban?token=" + user.getToken());
+
+                    UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                        Arrays.asList(
+                            new BasicNameValuePair("id_user", String.valueOf(userUnban.getIdUser()))
+                        )
+                    );
                     
-                    @Override
-                    public void onSuccess(int status, String pesan, Object data) {
-                        if (!Client.isTokenExpired(frameUnban, status, user)) {
-                            JOptionPane.showMessageDialog(frameUnban, pesan);
+                    Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                        @Override
+                        public void onPrepare() {
+                            btnPilihUnban.setEnabled(false);
                         }
-                    }
 
-                    @Override
-                    public void onFailed(Exception ex) {
-                        JOptionPane.showMessageDialog(frameUnban, ex.getMessage());
-                    }
+                        @Override
+                        public void onSuccess(int status, String pesan, Object data) {
+                            if (!Client.isTokenExpired(frameUnban, status, user)) {
+                                JOptionPane.showMessageDialog(frameUnban, pesan);
+                            }
+                        }
 
-                    @Override
-                    public void onDone() {
-                        userUnban = null;
-                        txtUsername.setText("");
-                        
-                        btnPilihUnban.setEnabled(userUnban != null);
-                        btnCari.setEnabled(true);
-                        
-                        frameUnban.setVisible(false);
-                    }
-                });
+                        @Override
+                        public void onFailed(Exception ex) {
+                            JOptionPane.showMessageDialog(frameUnban, ex.getMessage());
+                        }
+
+                        @Override
+                        public void onDone() {
+                            userUnban = null;
+                            txtUsername.setText("");
+
+                            btnPilihUnban.setEnabled(userUnban != null);
+                            btnCari.setEnabled(true);
+
+                            frameUnban.setVisible(false);
+                        }
+                    });
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
             }
         }
     }//GEN-LAST:event_btnPilihUnbanActionPerformed

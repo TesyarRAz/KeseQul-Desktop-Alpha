@@ -12,9 +12,12 @@ import com.kesequl.app.network.Client;
 import com.kesequl.app.network.Commands;
 import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
+import java.util.Arrays;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
@@ -47,9 +50,9 @@ public final class PengelolaanTU extends javax.swing.JFrame {
         this.frameParent = frameParent;
         
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
-        req.setUrl("tu/data");
-        req.setVal("token=" + user.getToken());
-        Client.executeConnection(req, Tu.class, new KesequlHttpCallback<Tu>() {
+        req.setUrl("tu/data?token=" + user.getToken());
+        
+        Client.executeForResult(true, null, req, Tu.class, new KesequlHttpCallback<Tu>() {
             @Override
             public void onSuccess(int status, String pesan, Tu data) {
                 if (!Client.isTokenExpired(PengelolaanTU.this, status, user)) {
@@ -395,40 +398,49 @@ public final class PengelolaanTU extends javax.swing.JFrame {
     private void btnCekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCekActionPerformed
         String username = txtUsername.getText().trim();
         
-        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-        req.setUrl("user/cekusername?token=" + user.getToken());
-        req.setVal("username=" + username);
-        
-        Client.executeConnection(req, null, new KesequlHttpCallback() {
-            @Override
-            public void onPrepare() {
-                btnCek.setEnabled(false);
-            }
-            
-            @Override
-            public void onSuccess(int status, String pesan, Object data) {
-                if (!Client.isTokenExpired(dialogTopup, status, user)) {
-                    if (status == 1) {
-                        targetTransfer = Integer.parseInt(pesan);
-                    } else {
-                        targetTransfer = -1;
-                        // BAGIAN IF ELSE JANGAN DIRUBAH, SANGAT PENTING
-                        JOptionPane.showMessageDialog(dialogTopup, pesan);
+        try {
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+            req.setUrl("user/cekusername?token=" + user.getToken());
+
+            UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                Arrays.asList(
+                    new BasicNameValuePair("username", username)
+                )
+            );
+
+            Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                @Override
+                public void onPrepare() {
+                    btnCek.setEnabled(false);
+                }
+
+                @Override
+                public void onSuccess(int status, String pesan, Object data) {
+                    if (!Client.isTokenExpired(dialogTopup, status, user)) {
+                        if (status == 1) {
+                            targetTransfer = Integer.parseInt(pesan);
+                        } else {
+                            targetTransfer = -1;
+                            // BAGIAN IF ELSE JANGAN DIRUBAH, SANGAT PENTING
+                            JOptionPane.showMessageDialog(dialogTopup, pesan);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailed(Exception ex) {
-                JOptionPane.showMessageDialog(dialogTopup, ex.getMessage());
-            }
+                @Override
+                public void onFailed(Exception ex) {
+                    JOptionPane.showMessageDialog(dialogTopup, ex.getMessage());
+                }
 
-            @Override
-            public void onDone() {
-                btnCek.setEnabled(true);
-                btnTransfer.setEnabled(targetTransfer != -1);
-            }
-        });
+                @Override
+                public void onDone() {
+                    btnCek.setEnabled(true);
+                    btnTransfer.setEnabled(targetTransfer != -1);
+                }
+            });
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_btnCekActionPerformed
 
     private void btnTransferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferActionPerformed
@@ -436,29 +448,39 @@ public final class PengelolaanTU extends javax.swing.JFrame {
             int uang = Integer.parseInt(String.valueOf(spnUang.getValue()));
             
             if (uang >= 10000) {
-                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-                req.setUrl("tu/topup?token=" + user.getToken());
-                req.setVal("id_penerima=" + targetTransfer + "&uang_transfer=" + uang);
-                
-                Client.executeConnection(req, null, new KesequlHttpCallback() {
-                    @Override
-                    public void onSuccess(int status, String pesan, Object data) {
-                        if (!Client.isTokenExpired(PengelolaanTU.this, status, user)) {
-                            if (status == 1) {
-                                targetTransfer = -1;
-                                btnTransfer.setEnabled(false);
-                                txtUsername.setText("");
-                            }
-                            
-                            JOptionPane.showMessageDialog(PengelolaanTU.this, pesan);
-                        }
-                    }
+                try {
+                    KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                    req.setUrl("tu/topup?token=" + user.getToken());
 
-                    @Override
-                    public void onFailed(Exception ex) {
-                        JOptionPane.showMessageDialog(PengelolaanTU.this, ex.getMessage());
-                    }
-                });
+                    UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                        Arrays.asList(
+                            new BasicNameValuePair("id_penerima", String.valueOf(targetTransfer)),
+                            new BasicNameValuePair("uang_transfer", String.valueOf(uang))
+                        )
+                    );
+
+                    Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                        @Override
+                        public void onSuccess(int status, String pesan, Object data) {
+                            if (!Client.isTokenExpired(PengelolaanTU.this, status, user)) {
+                                if (status == 1) {
+                                    targetTransfer = -1;
+                                    btnTransfer.setEnabled(false);
+                                    txtUsername.setText("");
+                                }
+
+                                JOptionPane.showMessageDialog(PengelolaanTU.this, pesan);
+                            }
+                        }
+
+                        @Override
+                        public void onFailed(Exception ex) {
+                            JOptionPane.showMessageDialog(PengelolaanTU.this, ex.getMessage());
+                        }
+                    });
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
             }
         }
     }//GEN-LAST:event_btnTransferActionPerformed

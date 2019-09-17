@@ -9,11 +9,14 @@ import com.kesequl.app.network.KesequlHttpRequest;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -179,43 +182,65 @@ public final class Login extends javax.swing.JFrame {
             return;
         }
         
-        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-        req.setUrl("user/login");
-        req.setVal("username=" + username + "&password=" + password);
-        btnLogin.setEnabled(false);
-        Client.executeConnection(req, User.class, new KesequlHttpCallback<User>() {
-            @Override
-            public void onSuccess(int status, String pesan, User data) {
-                if(status == 0){
-                    JOptionPane.showMessageDialog(Login.this, pesan);
-                    txtUsername.setText("");
-                    txtPassword.setText("");
-                    txtUsername.requestFocus();
-                } else if(status == 1){
-                    dispose();
-                    
-                    data.setPassword(password);
-                    
-                    // Mengatur Variable
-                    Client.prepareVariable(data);
-                    
-                    JFrame frame = new PilihPengelolaan(data);
-                    frame.setLocationRelativeTo(null);
-                    frame.setVisible(true);
-                    ((Runnable) frame).run();
-                    return;
+        try {
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+            req.setUrl("user/login");
+
+            UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                Arrays.asList(
+                    new BasicNameValuePair("username", username),
+                    new BasicNameValuePair("password", password)
+                )
+            );
+
+            Client.executeForResult(true, form, req, User.class, new KesequlHttpCallback<User>() {
+                @Override
+                public void onPrepare() {
+                    btnLogin.setEnabled(false);
                 }
                 
-                btnLogin.setEnabled(true);
-            }
+                @Override
+                public void onSuccess(int status, String pesan, User data) {
+                    if(status == 0){
+                        JOptionPane.showMessageDialog(Login.this, pesan);
+                        txtUsername.setText("");
+                        txtPassword.setText("");
+                        txtUsername.requestFocus();
+                    } else if(status == 1){
+                        dispose();
 
-            @Override
-            public void onFailed(Exception ex) {
-                JOptionPane.showMessageDialog(Login.this, ex.getMessage());
+                        data.setPassword(password);
+
+                        // Mengatur Variable
+                        Client.prepareVariable(data);
+
+                        JFrame frame = new PilihPengelolaan(data);
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                        ((Runnable) frame).run();
+                        return;
+                    }
+
+                    btnLogin.setEnabled(true);
+                }
+
+                @Override
+                public void onFailed(Exception ex) {
+                    JOptionPane.showMessageDialog(Login.this, ex.getMessage());
+
+                    btnLogin.setEnabled(true);
+                }
+
+                @Override
+                public void onDone() {
+                    btnLogin.setEnabled(true);
+                }
                 
-                btnLogin.setEnabled(true);
-            }
-        });
+            });
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
+        
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed

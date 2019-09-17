@@ -28,11 +28,14 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 
 /**
  *
@@ -341,79 +344,88 @@ public final class KelolaVoting extends javax.swing.JFrame {
             return;
         }
         
-        KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-        req.setUrl("voting/tambahevent?token=" + user.getToken());
-        req.setVal(
-                "nama_event=" + namaEvent + 
-                "&tanggal_mulai=" + tanggal_mulai +
-                "&tanggal_selesai=" + tanggal_selesai
-        );
-        Client.executeConnection(req, null, new KesequlHttpCallback() {
-            @Override
-            public void onPrepare() {
-                btnTambah.setEnabled(false);
-            }
-            @Override
-            public void onSuccess(int status, String pesan, Object data) {
-                if (!Client.isTokenExpired(KelolaVoting.this, status, user)) {
-                    if (status == 1) {
-                        btnTambah.setEnabled(true);
-                        
-                        txtNamaEvent.setText("");
-                        txtMulai.setDate(null);
-                        txtSelesai.setDate(null);
-                    }
-                    
-                    JOptionPane.showMessageDialog(KelolaVoting.this, pesan);
-                }
-            }
+        try {
+            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+            req.setUrl("voting/tambahevent?token=" + user.getToken());
 
-            @Override
-            public void onFailed(Exception ex) {
-                JOptionPane.showMessageDialog(KelolaVoting.this, ex);
-            }
-            
-            @Override
-            public void onDone() {
-                btnTambah.setEnabled(true);
-                btnRefreshActionPerformed(evt);
-            }
-        });
+            UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                Arrays.asList(
+                    new BasicNameValuePair("nama_event", namaEvent),
+                    new BasicNameValuePair("tanggal_mulai", tanggal_mulai),
+                    new BasicNameValuePair("tanggal_selesai", tanggal_selesai)
+                )
+            );
+
+            Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                @Override
+                public void onPrepare() {
+                    btnTambah.setEnabled(false);
+                }
+
+                @Override
+                public void onSuccess(int status, String pesan, Object data) {
+                    if (!Client.isTokenExpired(KelolaVoting.this, status, user)) {
+                        if (status == 1) {
+                            btnTambah.setEnabled(true);
+
+                            txtNamaEvent.setText("");
+                            txtMulai.setDate(null);
+                            txtSelesai.setDate(null);
+                        }
+
+                        JOptionPane.showMessageDialog(KelolaVoting.this, pesan);
+                    }
+                }
+
+                @Override
+                public void onFailed(Exception ex) {
+                    JOptionPane.showMessageDialog(KelolaVoting.this, ex.getMessage());
+                }
+
+                @Override
+                public void onDone() {
+                    btnTambah.setEnabled(true);
+                    btnRefreshActionPerformed(evt);
+                }
+            });
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        btnRefresh.setEnabled(false);
-        
         KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.GET);
         req.setUrl("voting/event?as=admin&token=" + user.getToken());
-        Client.executeConnectionList(req, EventVoting.class, new KesequlHttpCallback<List<EventVoting>>() {
+        
+        Client.executeForResultList(true, null, req, EventVoting.class, new KesequlHttpCallback<EventVoting>() {
+            DefaultTableModel model;
+            
             @Override
-            public void onSuccess(int status, String pesan, List<EventVoting> data) {
+            public void onPrepare() {
+                btnRefresh.setEnabled(false);
+                
+                model = (DefaultTableModel) table.getModel();
+                model.setNumRows(0);
+
+                listVoting.clear();
+            }
+            
+            @Override
+            public void onSuccess(int status, String pesan, EventVoting data) {
                 if (!Client.isTokenExpired(KelolaVoting.this, status, user)) {
                     if (status == 1) {
-                        DefaultTableModel model = (DefaultTableModel) table.getModel();
-                        model.setNumRows(0);
-
-                        listVoting.clear();
-                        listVoting.addAll(data);
-
-                        if (listVoting != null) {
-                            listVoting.forEach(voting -> {
-                                model.addRow(new Object[] {
-                                    voting.getNama(),
-                                    voting.getTanggalMulai().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
-                                    voting.getTanggalSelesai().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
-                                    voting.isStatus() ? "Aktif" : "Tidak Aktif",
-                                    voting.getPassword()
-                                });
+                        if (data != null) {
+                            listVoting.add(data);
+                            model.addRow(new Object[] {
+                                data.getNama(),
+                                data.getTanggalMulai().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
+                                data.getTanggalSelesai().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
+                                data.isStatus() ? "Aktif" : "Tidak Aktif",
+                                data.getPassword()
                             });
                         }
-                        if (listVoting.size()<1)
-                            model.removeRow(0);
-                        table.setModel(model);
                     }
                 }
-                
             }
 
             @Override
@@ -431,6 +443,7 @@ public final class KelolaVoting extends javax.swing.JFrame {
                 btnRefresh.setEnabled(true);
             }
         });
+        
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -461,49 +474,61 @@ public final class KelolaVoting extends javax.swing.JFrame {
                 return;
             }
             
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/editevent?token=" + user.getToken());
-            req.setVal(
-                "id_event_voting=" + editEntity.getIdEventVoting() +
-                "&nama_event=" + namaEvent + 
-                "&tanggal_mulai=" + tanggal_mulai +
-                "&tanggal_selesai=" + tanggal_selesai +
-                "&status=true"
-            );
-            
-            Client.executeConnection(req, null, new KesequlHttpCallback() {
-                @Override
-                public void onSuccess(int status, String pesan, Object data) {
-                    if (!Client.isTokenExpired(KelolaVoting.this, status, user)) {
-                        if (status == 1) {
-                            editMode = false;
-                            editEntity = null;
-                            
-                            txtNamaEvent.setText("");
-                            txtMulai.setDate(null);
-                            txtSelesai.setDate(null);
-                        }
-                        JOptionPane.showMessageDialog(KelolaVoting.this, pesan);
-                    }
-                }
+            try {
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                req.setUrl("voting/editevent?token=" + user.getToken());
 
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(KelolaVoting.this, ex.getMessage());
-                }
-                
-                @Override
-                public void onDone() {
-                    btnRefresh.setEnabled(!editMode);
-                    btnDetail.setEnabled(!editMode);
-                    btnBuatSelesai.setEnabled(!editMode);
-                    btnTambah.setEnabled(!editMode);
-                    btnEdit.setText(!editMode ? "Edit" : "Terapkan");
-                    btnHapus.setEnabled(!editMode);
-                    
-                    btnRefreshActionPerformed(evt);
-                }
-            });
+                UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                    Arrays.asList(
+                        new BasicNameValuePair("id_event_voting", String.valueOf(editEntity.getIdEventVoting())),
+                        new BasicNameValuePair("nama_event", namaEvent),
+                        new BasicNameValuePair("tanggal_mulai", tanggal_mulai),
+                        new BasicNameValuePair("tanggal_selesai", tanggal_selesai),
+                        new BasicNameValuePair("status", "1")
+                    )
+                );
+                Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                    @Override
+                    public void onPrepare() {
+                        btnEdit.setEnabled(false);
+                    }
+
+                    @Override
+                    public void onSuccess(int status, String pesan, Object data) {
+                        if (!Client.isTokenExpired(KelolaVoting.this, status, user)) {
+                            if (status == 1) {
+                                editMode = false;
+                                editEntity = null;
+
+                                txtNamaEvent.setText("");
+                                txtMulai.setDate(null);
+                                txtSelesai.setDate(null);
+                            }
+                            JOptionPane.showMessageDialog(KelolaVoting.this, pesan);
+                        }
+                    }
+
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(KelolaVoting.this, ex.getMessage());
+                    }
+
+                    @Override
+                    public void onDone() {
+                        btnRefresh.setEnabled(!editMode);
+                        btnTambah.setEnabled(!editMode);
+                        btnDetail.setEnabled(!editMode);
+                        btnBuatSelesai.setEnabled(!editMode);
+                        btnEdit.setEnabled(true);
+                        btnEdit.setText(!editMode ? "Edit" : "Terapkan");
+                        btnHapus.setEnabled(!editMode);
+
+                        btnRefreshActionPerformed(evt);
+                    }
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
         
         btnRefresh.setEnabled(!editMode);
@@ -524,29 +549,42 @@ public final class KelolaVoting extends javax.swing.JFrame {
         EventVoting votingS = listVoting.get(row);
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin dihapus ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            btnHapus.setEnabled(false);
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/hapusevent?token=" + user.getToken());
-            req.setVal("id_event_voting=" + votingS.getIdEventVoting());
-            
-            Client.executeConnection(req, null, new KesequlHttpCallback() {
-                @Override
-                public void onSuccess(int status, String pesan, Object data) {
-                    if (!Client.isTokenExpired(KelolaVoting.this, status, user))
-                        JOptionPane.showMessageDialog(KelolaVoting.this, pesan);
-                }
-
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(KelolaVoting.this, ex.getMessage());
-                }
+            try {
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                req.setUrl("voting/hapusevent?token=" + user.getToken());
                 
-                @Override
-                public void onDone() {
-                    btnHapus.setEnabled(true);
-                    btnRefreshActionPerformed(evt);
-                }
-            });
+                UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                    Arrays.asList(
+                        new BasicNameValuePair("id_event_voting", String.valueOf(votingS.getIdEventVoting()))
+                    )
+                );
+                
+                Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                    @Override
+                    public void onPrepare() {
+                        btnHapus.setEnabled(false);
+                    }
+                    
+                    @Override
+                    public void onSuccess(int status, String pesan, Object data) {
+                        if (!Client.isTokenExpired(KelolaVoting.this, status, user))
+                            JOptionPane.showMessageDialog(KelolaVoting.this, pesan);
+                    }
+
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(KelolaVoting.this, ex.getMessage());
+                    }
+
+                    @Override
+                    public void onDone() {
+                        btnHapus.setEnabled(true);
+                        btnRefreshActionPerformed(evt);
+                    }
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
@@ -575,34 +613,43 @@ public final class KelolaVoting extends javax.swing.JFrame {
         EventVoting votingS = listVoting.get(row);
         
         if (JOptionPane.showConfirmDialog(this, "Yakin ingin diselesaikan ?", "Konfirmasi", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
-            req.setUrl("voting/statusevent?token=" + user.getToken());
-            req.setVal("id_event_voting=" + votingS.getIdEventVoting() + "&status=0");
-            
-            Client.executeConnection(req, null, new KesequlHttpCallback() {
-                @Override
-                public void onPrepare() {
-                    btnBuatSelesai.setEnabled(false);
-                }
+            try {
+                KesequlHttpRequest req = new KesequlHttpRequest(KesequlHttpRequest.Method.POST);
+                req.setUrl("voting/statusevent?token=" + user.getToken());
                 
-                @Override
-                public void onSuccess(int status, String pesan, Object data) {
-                    if (!Client.isTokenExpired(KelolaVoting.this, status, user)) {
-                        JOptionPane.showMessageDialog(KelolaVoting.this, pesan);
+                UrlEncodedFormEntity form = new UrlEncodedFormEntity(
+                Arrays.asList(
+                    new BasicNameValuePair("id_event_voting", String.valueOf(votingS.getIdEventVoting())),
+                    new BasicNameValuePair("status", "0")
+                )
+            );
+                
+                Client.executeForResult(true, form, req, null, new KesequlHttpCallback() {
+                    @Override
+                    public void onPrepare() {
+                        btnBuatSelesai.setEnabled(false);
                     }
-                }
+                    
+                    @Override
+                    public void onSuccess(int status, String pesan, Object data) {
+                        if (!Client.isTokenExpired(KelolaVoting.this, status, user))
+                            JOptionPane.showMessageDialog(KelolaVoting.this, pesan);
+                    }
 
-                @Override
-                public void onFailed(Exception ex) {
-                    JOptionPane.showMessageDialog(KelolaVoting.this, ex.getMessage());
-                }
+                    @Override
+                    public void onFailed(Exception ex) {
+                        JOptionPane.showMessageDialog(KelolaVoting.this, ex.getMessage());
+                    }
 
-                @Override
-                public void onDone() {
-                    btnBuatSelesai.setEnabled(true);
-                    btnRefreshActionPerformed(evt);
-                }
-            });
+                    @Override
+                    public void onDone() {
+                        btnBuatSelesai.setEnabled(true);
+                        btnRefreshActionPerformed(evt);
+                    }
+                });
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage());
+            }
         }
     }//GEN-LAST:event_btnBuatSelesaiActionPerformed
 
