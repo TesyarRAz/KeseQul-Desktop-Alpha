@@ -20,6 +20,7 @@ public class Siswa implements JSONConverter{
     private int nisn;
     private String nama;
     private char gender;
+    private String imageLink;
     private LocalDate ttl;
     private int kelas;
     private Jurusan jurusan;
@@ -74,6 +75,14 @@ public class Siswa implements JSONConverter{
         this.ttl = ttl;
     }
 
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
+    }
+
     public int getKelas() {
         return kelas;
     }
@@ -116,6 +125,7 @@ public class Siswa implements JSONConverter{
        indexJurusan = json.getInt("index_jurusan");
        keterangan = json.optString("keterangan");
        ttl = LocalDate.parse(json.getString("tanggal_lahir"));
+       imageLink = json.getString("image_link");
        
        user = new User();
        user.fromJson(json);

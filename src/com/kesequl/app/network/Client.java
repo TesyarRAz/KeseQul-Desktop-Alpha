@@ -36,6 +36,8 @@ public class Client {
     // public static final String BASE_HOST = "https://kesequl.exposei.com/";
     public static final String BASE_HOST = "http://localhost/kesequl-alpha/";
     public static final String HOST_API = BASE_HOST + "Api/";
+    public static final String HOST_ASSET = BASE_HOST + "assets/upload/";
+    public static final String HOST_ASSET_IMAGE = HOST_ASSET + "image/";
     public static final String BASE_LAPORAN = BASE_HOST + "laporan/";
     public static final String HOST_LAPORAN_VOTING = BASE_LAPORAN + "voting/";
     

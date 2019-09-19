@@ -11,7 +11,9 @@ import com.kesequl.app.entity.User;
 import com.kesequl.app.network.Client;
 import com.kesequl.app.network.KesequlHttpCallback;
 import com.kesequl.app.network.KesequlHttpRequest;
+import java.awt.Image;
 import java.io.File;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -99,6 +101,7 @@ public final class KelolaGuru extends javax.swing.JFrame {
         txtGambar = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
         btnTambah = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
@@ -191,6 +194,13 @@ public final class KelolaGuru extends javax.swing.JFrame {
 
         jLabel8.setText(":");
 
+        jButton2.setText("Lihat");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -237,8 +247,10 @@ public final class KelolaGuru extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jButton1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtGambar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(174, Short.MAX_VALUE))))
+                                .addComponent(txtGambar, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2)))
+                        .addContainerGap(113, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,7 +282,8 @@ public final class KelolaGuru extends javax.swing.JFrame {
                     .addComponent(jButton1)
                     .addComponent(txtGambar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(jLabel8))
+                    .addComponent(jLabel8)
+                    .addComponent(jButton2))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
@@ -714,6 +727,25 @@ public final class KelolaGuru extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        String imageRes = null;
+        String imageLink = txtGambar.getText().trim();
+        if (editEntity != null) {
+            imageRes = !editEntity.getImageLink().isEmpty() ? Client.HOST_ASSET_IMAGE + editEntity.getImageLink() : null;
+        } else if (!imageLink.isEmpty()) {
+            imageRes = imageLink;
+        }
+        
+        if (imageRes != null) {
+            try {
+                Image image = new ImageIcon(URI.create(imageRes).toURL()).getImage();
+                
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "URL Gambar tidak valid");
+            }
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBan;
     private javax.swing.JButton btnEdit;
@@ -724,6 +756,7 @@ public final class KelolaGuru extends javax.swing.JFrame {
     private javax.swing.JButton btnTambah;
     private javax.swing.JFileChooser chooserImage;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel16;

@@ -20,6 +20,7 @@ public class Tu implements JSONConverter{
     private int nip;
     private String nama;
     private char gender;
+    private String imageLink;
     private LocalDate ttl;
     private String keterangan;
 
@@ -63,6 +64,14 @@ public class Tu implements JSONConverter{
         this.gender = gender;
     }
 
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
+    }
+
     public LocalDate getTtl() {
         return ttl;
     }
@@ -86,6 +95,7 @@ public class Tu implements JSONConverter{
         gender = json.getString("gender").charAt(0);
         idTU = json.getInt("id_tu");
         nip = json.getInt("nip");
+        imageLink = json.getString("image_link");
         keterangan = json.optString("keterangan");
         
         user = new User();

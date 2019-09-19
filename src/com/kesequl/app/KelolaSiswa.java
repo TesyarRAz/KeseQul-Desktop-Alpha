@@ -110,6 +110,7 @@ public final class KelolaSiswa extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         txtGambar = new javax.swing.JTextField();
         jLabel22 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
         btnTambah = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
@@ -218,6 +219,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
 
         jLabel22.setText(":");
 
+        jButton2.setText("Lihat");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -284,7 +287,9 @@ public final class KelolaSiswa extends javax.swing.JFrame {
                                                 .addComponent(jLabel22)
                                                 .addGap(18, 18, 18)
                                                 .addComponent(spnIndexJurusan, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                .addGap(0, 329, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2)
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
         jPanel2Layout.setVerticalGroup(
@@ -330,7 +335,8 @@ public final class KelolaSiswa extends javax.swing.JFrame {
                     .addComponent(jButton1)
                     .addComponent(txtGambar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel20)
-                    .addComponent(jLabel21))
+                    .addComponent(jLabel21)
+                    .addComponent(jButton2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
@@ -852,6 +858,7 @@ public final class KelolaSiswa extends javax.swing.JFrame {
     private javax.swing.JFileChooser chooserImage;
     private javax.swing.JComboBox<String> comboJurusan;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
