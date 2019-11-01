@@ -95,7 +95,7 @@ public class Tu implements JSONConverter{
         gender = json.getString("gender").charAt(0);
         idTU = json.getInt("id_tu");
         nip = json.getInt("nip");
-        imageLink = json.getString("image_link");
+        imageLink = json.optString("image_link");
         keterangan = json.optString("keterangan");
         
         user = new User();

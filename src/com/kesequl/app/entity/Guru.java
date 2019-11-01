@@ -96,7 +96,7 @@ public class Guru implements JSONConverter {
         idGuru = json.getInt("id_guru");
         nip = json.getInt("nip");
         keterangan = json.optString("keterangan");
-        imageLink = json.getString("image_link");
+        imageLink = json.optString("image_link");
         
         user = new User();
         user.fromJson(json);

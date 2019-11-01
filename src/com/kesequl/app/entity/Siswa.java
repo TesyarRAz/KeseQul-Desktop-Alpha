@@ -125,7 +125,7 @@ public class Siswa implements JSONConverter{
        indexJurusan = json.getInt("index_jurusan");
        keterangan = json.optString("keterangan");
        ttl = LocalDate.parse(json.getString("tanggal_lahir"));
-       imageLink = json.getString("image_link");
+       imageLink = json.optString("image_link");
        
        user = new User();
        user.fromJson(json);
